@@ -1,3 +1,6 @@
+# Local env files (containing passwords/ api keys)
+.env
+
 # Logs
 logs
 *.log
