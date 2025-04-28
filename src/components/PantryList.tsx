@@ -19,8 +19,8 @@ const PantryList: React.FC<PantryListProps> = ({ items }) => {
         <ul className="space-y-2">
           {items.map((item) => (
             <li key={item.id} className="flex justify-between items-center py-2">
-              <span>{item.name}</span>
-              <span className="text-medium-gray">{item.quantity}</span>
+              <span>{item.item}</span>
+              <span className="text-medium-gray">{item.qty}</span>
             </li>
           ))}
         </ul>
