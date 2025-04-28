@@ -7,9 +7,10 @@ import { Recipe, MoodType, moods } from '../types';
 import { sampleRecipes } from '../data/initialData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Utensils, LoaderCircle } from 'lucide-react';
+import { toast } from "sonner";
 
 interface MealSuggestionProps {
-  pantryItems: string[]; // We'll just pass the names for simplicity
+  pantryItems: string[];
 }
 
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
@@ -17,12 +18,35 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType>('anything is fine');
 
+  const handleMoodChange = async (value: MoodType) => {
+    setMood(value);
+    
+    try {
+      const response = await fetch('https://dg9.app.n8n.cloud/webhook-test/4c199fb4-acaa-4049-9d6e-df72cd701d73', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors', // Add this to handle CORS
+        body: JSON.stringify({
+          mood: value,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      // Since we're using no-cors, we show a success message
+      toast.success('Food mood updated!');
+    } catch (error) {
+      console.error('Error sending mood:', error);
+      toast.error('Failed to update food mood');
+    }
+  };
+
   const handleSuggestMeals = () => {
     setLoading(true);
     
     // Simulate API call to OpenAI
     setTimeout(() => {
-      // For demo purposes, we'll just return the sample recipes
       setRecipes(sampleRecipes);
       setLoading(false);
     }, 1500);
@@ -36,7 +60,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
           <div className="w-full md:w-1/3">
-            <Select value={mood} onValueChange={(value) => setMood(value as MoodType)}>
+            <Select value={mood} onValueChange={handleMoodChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select your food mood" />
               </SelectTrigger>
