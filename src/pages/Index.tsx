@@ -83,8 +83,12 @@ const Index = () => {
           <h1 className="text-3xl font-poppins font-semibold">🍽️ vAIbe Cooking!</h1>
           <p className="text-xl mt-4">👋 Hey Master Chef!</p>
         </header>
+
+        <div className="mt-6">
+          <MealSuggestion pantryItems={pantryItemNames} />
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Pass the fetched pantry items to the PantryList component */}
           <PantryList items={pantryItems} />
           
@@ -92,10 +96,6 @@ const Index = () => {
             items={groceryItems} 
             onUpdateItems={setGroceryItems} 
           />
-        </div>
-        
-        <div className="mt-6">
-          <MealSuggestion pantryItems={pantryItemNames} />
         </div>
         
         <div className="mt-6">
