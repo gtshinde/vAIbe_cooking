@@ -14,9 +14,9 @@ export interface GroceryItem {
 export interface Recipe {
   id: string;
   title: string;
-  description: string;
+  steps: string;
   ingredients: string[];
-  instructions: string[];
+  // instructions: string[];
 }
 
 export type MoodType = 
