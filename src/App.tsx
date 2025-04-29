@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import 'primereact/resources/themes/saga-blue/theme.css'; // primereact theme
+import 'primereact/resources/primereact.min.css'; // core css
 
 const queryClient = new QueryClient();
 
