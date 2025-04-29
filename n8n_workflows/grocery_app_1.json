@@ -1,0 +1,192 @@
+{
+  "name": "grocery_app",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "4c199fb4-acaa-4049-9d6e-df72cd701d73",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        -260
+      ],
+      "id": "6621c048-a945-431b-927d-4b81f437c6bd",
+      "name": "Webhook",
+      "webhookId": "4c199fb4-acaa-4049-9d6e-df72cd701d73"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -300,
+        -40
+      ],
+      "id": "0f3ecd09-7126-4486-b794-15008d9ea878",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZFajLdZRmZ7pyeHe",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        100,
+        -260
+      ],
+      "id": "6aa15867-62ff-4d32-9553-ec11acdca98a",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst timeZone = 'America/New_York'; // Define once to avoid repetition\n\n// Extract the current hour (in 24-hour format) in EST for meal time classification\nconst estHour = parseInt(now.toLocaleString('en-US', {\n  timeZone,\n  hour: '2-digit',\n  hour12: false\n}), 10);\n\n// Get day name in EST to determine if it's a weekday or weekend\nconst dayName = now.toLocaleString('en-US', {\n  timeZone,\n  weekday: 'long'\n});\n\nconst isWeekend = (dayName === 'Saturday' || dayName === 'Sunday');\nconst result = isWeekend ? 'Weekend' : 'Weekday';\n\n// Format current time in EST (e.g., \"10:27 PM\") for UI display\nconst estFormattedTime = now.toLocaleTimeString('en-US', {\n  timeZone,\n  hour: '2-digit',\n  minute: '2-digit',\n  hour12: true\n});\n\n// Classify meal type based on the current EST hour\nlet mealType = '';\nif (estHour >= 5 && estHour < 11) {\n  mealType = 'Breakfast';\n} else if (estHour >= 11 && estHour < 16) {\n  mealType = 'Lunch';\n} else if (estHour >= 16 && estHour < 24) {\n  mealType = 'Dinner';\n} else {\n  mealType = 'Snack';\n}\n\n// Output values for use in n8n or UI\nreturn [\n  {\n    json: {\n      mealType: mealType,\n      formattedTime: estFormattedTime,\n      result: result  // \"Weekday\" or \"Weekend\"\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        -260
+      ],
+      "id": "316a106b-9016-4ec8-abcc-5ef772d87102",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=My available ingredients are: {{ $('Webhook').item.json.body.kitchen_inventory }}.\nSuggest recipes suitable for {{ $json.mealType }}. Today is a {{ $json.result }} so suggest 3 {{ $json.result === 'Weekend' ? 'quick meals that can be prepared easily within 15–30 minutes.' : 'elaborate meals that can be richer, involve multiple components, and may take 45 mins or more to prepare.' }}\nIf it is not possible to suggest 3 entirely distinct recipes, you may suggest creative variations based on available ingredients.\nEach and every single recipe strictly must and should {{\n  $('Webhook').item.json.body.mood.length === 1\n    ? 'clearly reflect the \"' + $('Webhook').item.json.body.mood[0] + '\" mood.'\n    : 'clearly reflect BOTH \"' + $('Webhook').item.json.body.mood[0] + '\" AND \"' + $('Webhook').item.json.body.mood[1] + '\" moods — not just one.'\n}}\nFor each recipe, provide:\n- Id\n- Title  \n- Steps \n- Time\n- Ingredients used (only from the provided list)\n\n\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a master chef with expertise in world cuisines.\nYou have deep knowledge of correct culinary terms and understand how different ingredients pair well together.\nYou MUST suggest 3 recipies to user.Always prioritize the user's mood. Select recipes using only the listed kitchen ingredients. Flexibility in ingredient use is allowed based on mood, but no external ingredients are permitted under any circumstances. \n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -260,
+        -260
+      ],
+      "id": "0a7a50d5-c656-4ae2-bdb9-952993acae3d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"recipes\": [\n    {\n      \"id\": 1,\n      \"title\": \"\",\n      \"steps\": \"\",\n      \"ingredients\": [\"ingredient1\", \"ingredient2\"],\n      \"time\": \"\"\n    },\n    {\n      \"id\": 2,\n      \"title\": \"\",\n      \"steps\": \"\",\n      \"ingredients\": [\"ingredient1\", \"ingredient2\"],\n      \"time\": \"\"\n    },\n    {\n      \"id\": 3,\n      \"title\": \"\",\n      \"steps\": \"\",\n      \"ingredients\": [\"ingredient1\", \"ingredient2\"],\n      \"time\": \"\"\n    }\n  ]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        120
+      ],
+      "id": "daa5f24c-8ef4-4925-9449-f786274ed58d",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"recipes\": [\n    {\n      \"id\": 1,\n      \"title\": \"\",\n      \"steps\": \"\",\n      \"time\": \"\",\n      \"ingredients\": [\"ingredient1\", \n      \"ingredient2\"]\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        -20
+      ],
+      "id": "a46373e9-380d-46af-a4a7-c2c83e0953b6",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        []
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "250bfa71-330d-4b1f-af00-77cb27c907aa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f70faea8e7b9d53f439d792d6d5e7f6512ab0db23e8fe7cf175276161f9321a6"
+  },
+  "id": "CGsDX7tqNXFAuEAv",
+  "tags": []
+}
