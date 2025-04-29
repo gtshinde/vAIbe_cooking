@@ -8,6 +8,7 @@ import { sampleRecipes } from '../data/initialData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Utensils, LoaderCircle } from 'lucide-react';
 import { toast } from "sonner";
+import { MultiSelect } from 'primereact/multiselect';
 
 interface MealSuggestionProps {
   pantryItems: string[];
@@ -16,12 +17,14 @@ interface MealSuggestionProps {
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
-  const [mood, setMood] = useState<MoodType>('anything');
+  const [mood, setMood] = useState<MoodType[]>(['anything']);
 
-  const handleMoodChange = (value: MoodType) => {
-    setMood(value);
-
-    // Since we're using no-cors, we show a success message
+  const handleMoodChange = (selectedMoods: MoodType[]) => {
+    if(selectedMoods.length > 0){
+      setMood(selectedMoods);
+    } else{
+      setMood(['anything']);
+    }
     toast.success('Food mood updated!');
   };
 
@@ -66,22 +69,27 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h2 className="text-xl mb-4">🍳 Today's Meal</h2>
+      <h2 className="text-xl mb-4">🍳 What's your food mood?</h2>
+      <i className="text-medium text-medium-gray mb-4">
+        Select up-to two food moods and let us suggest some recipes based on your pantry items.
+      </i>
       <Separator className="my-4" />
       
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
           <div className="w-full md:w-1/3">
-            <Select value={mood} onValueChange={handleMoodChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your food mood" />
-              </SelectTrigger>
-              <SelectContent>
-                {moods.map(mood => (
-                  <SelectItem key={mood} value={mood}>{mood}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect 
+              value={mood || []}
+              options={moods}
+              onChange={(e) => handleMoodChange(e.value || [])}
+              placeholder="What's your food mood?"
+              display='chip'
+              selectionLimit={2}
+              selectAll={false}
+              showSelectAll={false}
+              // selectAllLabel="Select up-to two moods"
+              
+             />
           </div>
           
           <Button 
