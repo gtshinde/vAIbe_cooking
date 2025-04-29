@@ -16,7 +16,7 @@ interface MealSuggestionProps {
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
-  const [mood, setMood] = useState<MoodType>('anything is fine');
+  const [mood, setMood] = useState<MoodType>('anything');
 
   const handleMoodChange = (value: MoodType) => {
     setMood(value);

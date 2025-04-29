@@ -20,22 +20,21 @@ export interface Recipe {
 }
 
 export type MoodType = 
-  | 'bored'
-  | 'anything is fine'
+  | 'sweet'
+  | 'anything'
   | 'spicy'
   | 'crunchy'
   | 'bland'
   | 'simple'
   | 'homely'
-  | 'comforting';
+  ;
 
 export const moods: MoodType[] = [
-  'bored',
-  'anything is fine',
+  'sweet',
+  'anything',
   'spicy',
   'crunchy', 
   'bland',
   'simple',
-  'homely',
-  'comforting'
+  'homely'
 ];
