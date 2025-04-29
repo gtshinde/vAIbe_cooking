@@ -4,6 +4,27 @@
 
 **URL**: https://lovable.dev/projects/ae5c13a5-cff2-4ae9-baf1-a8b09d30d7c9
 
+## How to run the project?
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
+```
+
+Create the .env file as shown below and replace '...' with the Supabase key & URL:
+```
+VITE_SUPABASE_KEY=...
+VITE_SUPABASE_URL=...
+```
+
 ## How can I edit this code?
 
 There are several ways of editing your application.

@@ -8,6 +8,7 @@ import { sampleRecipes } from '../data/initialData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Utensils, LoaderCircle } from 'lucide-react';
 import { toast } from "sonner";
+import { MultiSelect } from 'primereact/multiselect';
 
 interface MealSuggestionProps {
   pantryItems: string[];
@@ -16,60 +17,79 @@ interface MealSuggestionProps {
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
-  const [mood, setMood] = useState<MoodType>('anything is fine');
+  const [mood, setMood] = useState<MoodType[]>(['anything']);
 
-  const handleMoodChange = async (value: MoodType) => {
-    setMood(value);
-    
+  const handleMoodChange = (selectedMoods: MoodType[]) => {
+    if(selectedMoods.length > 0){
+      setMood(selectedMoods);
+    } else{
+      setMood(['anything']);
+    }
+    toast.success('Food mood updated!');
+  };
+
+  const handleSuggestMeals = async () => {
+    setLoading(true);
+
     try {
+      // Send mood and fetch recipes from n8n webhook
       const response = await fetch('https://dg9.app.n8n.cloud/webhook-test/4c199fb4-acaa-4049-9d6e-df72cd701d73', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        mode: 'no-cors', // Add this to handle CORS
+        // mode: 'no-cors', 
         body: JSON.stringify({
-          mood: value,
+          "kitchen_inventory": pantryItems,
+          mood: mood,
           timestamp: new Date().toISOString(),
         }),
       });
 
-      // Since we're using no-cors, we show a success message
-      toast.success('Food mood updated!');
+      console.log('Response status:', response.status);
+
+      if(!response.ok){
+        throw new Error('Failed to fetch recipes');
+      }
+
+      const data = await response.json();
+      console.log('Received recipes:', data);
+      console.log(data.output.recipes);
+
+      setRecipes(data.output.recipes);
+      toast.success('Recipes retrieved successfully!');
     } catch (error) {
       console.error('Error sending mood:', error);
-      toast.error('Failed to update food mood');
-    }
-  };
-
-  const handleSuggestMeals = () => {
-    setLoading(true);
-    
-    // Simulate API call to OpenAI
-    setTimeout(() => {
-      setRecipes(sampleRecipes);
+      toast.error('Failed to retrieve recipes. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
+    
   };
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h2 className="text-xl mb-4">🍳 Today's Meal</h2>
+      <h2 className="text-xl mb-4">🍳 What's your food mood?</h2>
+      <i className="text-medium text-medium-gray mb-4">
+        Select up-to two food moods and let us suggest some recipes based on your pantry items.
+      </i>
       <Separator className="my-4" />
       
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
           <div className="w-full md:w-1/3">
-            <Select value={mood} onValueChange={handleMoodChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your food mood" />
-              </SelectTrigger>
-              <SelectContent>
-                {moods.map(mood => (
-                  <SelectItem key={mood} value={mood}>{mood}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <MultiSelect 
+              value={mood || []}
+              options={moods}
+              onChange={(e) => handleMoodChange(e.value || [])}
+              placeholder="What's your food mood?"
+              display='chip'
+              selectionLimit={2}
+              selectAll={false}
+              showSelectAll={false}
+              // selectAllLabel="Select up-to two moods"
+              
+             />
           </div>
           
           <Button 
@@ -97,7 +117,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                 <Card key={recipe.id} className="h-full">
                   <CardHeader>
                     <CardTitle>{recipe.title}</CardTitle>
-                    <CardDescription>{recipe.description}</CardDescription>
+                    <CardDescription>{recipe.steps}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <div>
