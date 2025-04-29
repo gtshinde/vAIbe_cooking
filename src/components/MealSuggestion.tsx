@@ -18,38 +18,50 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType>('anything is fine');
 
-  const handleMoodChange = async (value: MoodType) => {
+  const handleMoodChange = (value: MoodType) => {
     setMood(value);
-    
+
+    // Since we're using no-cors, we show a success message
+    toast.success('Food mood updated!');
+  };
+
+  const handleSuggestMeals = async () => {
+    setLoading(true);
+
     try {
+      // Send mood and fetch recipes from n8n webhook
       const response = await fetch('https://dg9.app.n8n.cloud/webhook-test/4c199fb4-acaa-4049-9d6e-df72cd701d73', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        mode: 'no-cors', // Add this to handle CORS
+        // mode: 'no-cors', 
         body: JSON.stringify({
-          mood: value,
+          "kitchen_inventory": pantryItems,
+          mood: mood,
           timestamp: new Date().toISOString(),
         }),
       });
 
-      // Since we're using no-cors, we show a success message
-      toast.success('Food mood updated!');
+      console.log('Response status:', response.status);
+
+      if(!response.ok){
+        throw new Error('Failed to fetch recipes');
+      }
+
+      const data = await response.json();
+      console.log('Received recipes:', data);
+      console.log(data.output.recipes);
+
+      setRecipes(data.output.recipes);
+      toast.success('Recipes retrieved successfully!');
     } catch (error) {
       console.error('Error sending mood:', error);
-      toast.error('Failed to update food mood');
-    }
-  };
-
-  const handleSuggestMeals = () => {
-    setLoading(true);
-    
-    // Simulate API call to OpenAI
-    setTimeout(() => {
-      setRecipes(sampleRecipes);
+      toast.error('Failed to retrieve recipes. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
+    
   };
 
   return (
@@ -97,7 +109,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                 <Card key={recipe.id} className="h-full">
                   <CardHeader>
                     <CardTitle>{recipe.title}</CardTitle>
-                    <CardDescription>{recipe.description}</CardDescription>
+                    <CardDescription>{recipe.steps}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <div>
