@@ -7,8 +7,9 @@ export interface PantryItem {
 
 export interface GroceryItem {
   id: string;
-  name: string;
-  completed: boolean;
+  created_at: Date;
+  item: string;
+  is_completed: boolean;
 }
 
 export interface Recipe {
