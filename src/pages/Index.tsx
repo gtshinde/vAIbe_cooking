@@ -10,7 +10,7 @@ import { supabase } from '../utils/supabase-client';
 const Index = () => {
   // const [pantryItems, setPantryItems] = useState<PantryItem[]>(initialPantryItems);
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
-  const [groceryItems, setGroceryItems] = useState<GroceryItem[]>(initialGroceryItems);
+  const [groceryItems, setGroceryItems] = useState<GroceryItem[]>([]);
   const [lastGroceryRunDate, setLastGroceryRunDate] = useState<Date | null>(null);
 
   // Fetch pantry items from Supabase
@@ -20,7 +20,19 @@ const Index = () => {
       console.log("Error fetching pantry items:", error);
       return [];
     } else{
-      console.log("Fetched pantry items:", data);
+      // console.log("Fetched pantry items:", data);
+      return data;
+    }
+  };
+
+  // Fetch grocery items from Supabase
+  const fetchGroceryItems = async () => {
+    const {data, error} = await supabase.from("Grocery").select("*");
+    if(error){
+      console.log("Error fetching grocery items:", error);
+      return [];
+    } else{
+      console.log("Fetched grocery items:", data);
       return data;
     }
   };
@@ -36,16 +48,22 @@ const Index = () => {
 
     loadPantryItems();
 
-    const savedGroceryItems = localStorage.getItem('groceryItems');
+    // const savedGroceryItems = localStorage.getItem('groceryItems');
+    const loadGroceryItems = async () => {
+      const savedGroceryItems = await fetchGroceryItems();
+      setGroceryItems(savedGroceryItems);
+    }
+
+    loadGroceryItems();
     const savedLastGroceryRunDate = localStorage.getItem('lastGroceryRunDate');
     
     // if (savedPantryItems) {
     //   setPantryItems(JSON.parse(savedPantryItems));
     // }
     
-    if (savedGroceryItems) {
-      setGroceryItems(JSON.parse(savedGroceryItems));
-    }
+    // if (savedGroceryItems) {
+    //   setGroceryItems(JSON.parse(savedGroceryItems));
+    // }
     
     if (savedLastGroceryRunDate) {
       setLastGroceryRunDate(new Date(savedLastGroceryRunDate));
@@ -65,8 +83,8 @@ const Index = () => {
     // Reset pantry to default values
     setPantryItems(initialPantryItems);
     
-    // Clean up completed items from grocery list
-    const updatedGroceryItems = groceryItems.filter(item => !item.completed);
+    // Clean up is_completed items from grocery list
+    const updatedGroceryItems = groceryItems.filter(item => !item.is_completed);
     setGroceryItems(updatedGroceryItems);
     
     // Update last grocery run date
