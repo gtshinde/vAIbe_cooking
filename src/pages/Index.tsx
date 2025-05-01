@@ -108,7 +108,10 @@ const Index = () => {
         
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Pass the fetched pantry items to the PantryList component */}
-          <PantryList items={pantryItems} />
+          <PantryList 
+            items={pantryItems} 
+            onUpdateItems={setPantryItems}
+          />
           
           <GroceryList 
             items={groceryItems} 
