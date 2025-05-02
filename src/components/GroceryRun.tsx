@@ -19,9 +19,7 @@ const GroceryRun: React.FC<GroceryRunProps> = ({ onGroceryRun, lastGroceryRunDat
     
     toast({
       title: "Success",
-      description: "Pantry updated successfully!",
-      variant: "default",
-      className: "bg-soft-green text-white"
+      description: "Pantry updated successfully!"
     });
   };
 
