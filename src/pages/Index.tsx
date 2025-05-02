@@ -6,8 +6,11 @@ import GroceryRun from '@/components/GroceryRun';
 import { PantryItem, GroceryItem } from '@/types';
 import { initialPantryItems, initialGroceryItems } from '@/data/initialData';
 import { supabase } from '../utils/supabase-client';
+import { useToast } from '@/components/ui/use-toast';
 
 const Index = () => {
+  const { toast } = useToast();
+
   // const [pantryItems, setPantryItems] = useState<PantryItem[]>(initialPantryItems);
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
   const [groceryItems, setGroceryItems] = useState<GroceryItem[]>([]);
@@ -30,6 +33,10 @@ const Index = () => {
     const {data, error} = await supabase.from("Grocery").select("*");
     if(error){
       console.log("Error fetching grocery items:", error);
+      toast({
+        title: "Error",
+        description: "Error fetching grocery items from Supabase"
+      });
       return [];
     } else{
       console.log("Fetched grocery items:", data);
@@ -79,13 +86,65 @@ const Index = () => {
     }
   }, [pantryItems, groceryItems, lastGroceryRunDate]);
   
-  const handleGroceryRun = () => {
+  // insert pantry items into Supabase
+  const insertPantryItems = async (newPantryItems: PantryItem[]) => {
+    const { error } = await supabase
+      .from("Pantry")
+      .insert(newPantryItems);
+    if (error) {
+      console.log("Error inserting pantry items:", error);
+      toast({
+        title: "Error",
+        description: "Error inserting pantry items into Supabase"
+      });
+    }
+  };
+
+  // delete checked grocery items from Supabase
+  const deleteGroceryItems = async (oldGroceryItems: GroceryItem[]) => {
+    const { error } = await supabase
+      .from("Grocery")
+      .delete()
+      .in("id", oldGroceryItems.map(item => item.id));
+    if (error) {
+      console.log("Error deleting grocery items:", error);
+      toast({
+        title: "Error",
+        description: "Error deleting grocery items from Supabase"
+      });
+    }
+  }
+
+  const handleGroceryRun = async () => {
     // Reset pantry to default values
-    setPantryItems(initialPantryItems);
+    // setPantryItems(initialPantryItems);
+
+    // find the largest id in the pantry items
+    let pantryItemCount = pantryItems.length !== 0 ? Math.max(...pantryItems.map(item => parseInt(item.id))): 0;
     
     // Clean up is_completed items from grocery list
     const updatedGroceryItems = groceryItems.filter(item => !item.is_completed);
+    const purchasedGroceryItems = groceryItems.filter(item => item.is_completed);
+
+    // converting the purchasedGroceryItems to the format of pantry items
+    const newPantryItems: PantryItem[] = purchasedGroceryItems.map(item => ({
+      id: (++pantryItemCount).toString(),
+      item: item.item,
+      created_at: new Date()
+    }));
+
+    console.log("After restocking updated pantry items:", newPantryItems);
+
+    // insert the purchasedGroceryItems into Supabase
+    await insertPantryItems(newPantryItems);
+
+    // delete the newPantryItems from Supabase
+    await deleteGroceryItems(purchasedGroceryItems);
+
     setGroceryItems(updatedGroceryItems);
+    
+    const latestGroceryItems = await fetchPantryItems();
+    setPantryItems(latestGroceryItems);
     
     // Update last grocery run date
     setLastGroceryRunDate(new Date());
