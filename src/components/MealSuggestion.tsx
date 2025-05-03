@@ -33,7 +33,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
 
     try {
       // Send mood and fetch recipes from n8n webhook
-      const response = await fetch('https://dg9.app.n8n.cloud/webhook-test/4c199fb4-acaa-4049-9d6e-df72cd701d73', {
+      const response = await fetch('https://reddit-grocery-apps.app.n8n.cloud/webhook-test/4c199fb4-acaa-4049-9d6e-df72cd701d73', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,6 +118,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                   <CardHeader>
                     <CardTitle>{recipe.title}</CardTitle>
                     <CardDescription>{recipe.steps}</CardDescription>
+                    <strong><CardDescription>⏱️ Time: {recipe.time}</CardDescription></strong>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <div>
