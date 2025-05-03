@@ -16,6 +16,7 @@ export interface Recipe {
   id: string;
   title: string;
   steps: string;
+  time: string;
   ingredients: string[];
   // instructions: string[];
 }
