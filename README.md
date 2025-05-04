@@ -1,31 +1,45 @@
-# Welcome to your Lovable project
+# vAIbe Cooking!
 
-## Project info
+v**AI**be Cooking is an AI-powered recipe suggestion app that helps you discover meals based on your _food mood_ and available pantry items. It provides a seamless and intuitive cooking experience tailored to your preferences.
 
-**URL**: https://lovable.dev/projects/ae5c13a5-cff2-4ae9-baf1-a8b09d30d7c9
+## What technologies are used for this project?
+I'm glad you asked!
+
+![Static Badge](https://img.shields.io/badge/Made%20with%20%E2%9D%A4%EF%B8%8F%20-on%20GitHub-%23181717?style=flat&logo=github&color=blue)
+
+
+ 
+[![Nodejs Badge](https://img.shields.io/badge/-Nodejs-3C873A?style=flat&labelColor=black&logo=node.js&logoColor=3C873A)](#) ![Static Badge](https://img.shields.io/badge/vite-%23646CFF?style=flat&logo=vite&labelColor=black) [![React Badge](https://img.shields.io/badge/-React-61DBFB?style=flat&labelColor=black&logo=react&logoColor=61DBFB)](#) [![Typescript Badge](https://img.shields.io/badge/-TypeScript-007acc?style=flat&labelColor=black&logo=typescript&logoColor=007acc)](#) ![Static Badge](https://img.shields.io/badge/shadcn--ui-black?style=flat&logo=shadcnui&labelColor=black) ![Static Badge](https://img.shields.io/badge/tailwindcss-%2306B6D4?style=flat&logo=tailwindcss&labelColor=black) ![Static Badge](https://img.shields.io/badge/supabase-%233FCF8E?style=flat&logo=supabase&labelColor=black) ![Static Badge](https://img.shields.io/badge/n8n-%23EA4B71?style=flat&logo=n8n&labelColor=black)
 
 ## How to run the project?
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+#### Step 1: Clone the repository using the project's Git URL:
+```bash
+git clone https://github.com/gtshinde/vAIbe_cooking.git
 ```
 
-Create the .env file as shown below and replace '...' with the Supabase key & URL:
+#### Step 2: Navigate to the project directory.
+```bash
+cd vAIbe_cooking
+```
+
+#### Step 3: Install the necessary dependencies.
+```bash
+npm i
+```
+
+#### Step 4: Create the .env file as shown below and replace '...' with the Supabase key & URL:
 ```
 VITE_SUPABASE_KEY=...
 VITE_SUPABASE_URL=...
 ```
 
-## How can I edit this code?
+#### Step 5: Start the development server with auto-reloading and an instant preview.
+```bash
+npm run dev
+```
+
+
+<!-- ## How can I edit this code?
 
 There are several ways of editing your application.
 
@@ -69,19 +83,9 @@ npm run dev
 - Click on the "Code" button (green button) near the top right.
 - Select the "Codespaces" tab.
 - Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Edit files directly within the Codespace and commit and push your changes once you're done. -->
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
+<!-- ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/ae5c13a5-cff2-4ae9-baf1-a8b09d30d7c9) and click on Share -> Publish.
 
@@ -91,4 +95,4 @@ Yes, you can!
 
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide) -->
