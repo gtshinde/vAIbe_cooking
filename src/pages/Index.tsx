@@ -155,9 +155,38 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-very-light-gray">
-      <div className="container max-w-5xl mx-auto py-8 px-4">
+      <div className="container max-w-6xl mx-auto py-8 px-1">
         <header className="mb-8">
-          <h1 className="text-3xl font-poppins font-semibold">🍽️ vAIbe Cooking!</h1>
+          <h1 className="text-5xl font-georgia font-semibold text-center text-white">
+          <span className="bg-gradient-to-r from-gray-400 via-blue-500 to-blue-800 text-transparent bg-clip-text animate-pulse">
+            V
+          </span>
+            <img
+              src="https://em-content.zobj.net/thumbs/240/apple/325/wine-glass_1f377.png"
+              alt="🍷"
+              className="inline w-8 h-8 mx-1"
+            />
+          <span className="bg-gradient-to-r from-gray-400 via-blue-500 to-blue-800` text-transparent bg-clip-text animate-pulse">
+            BE
+          </span> 
+          <span className="mx-2"></span> {/* Adds space */}
+          <span className="bg-gradient-to-r from-gray-800 via-blue-500 to-blue-800 text-transparent bg-clip-text animate-pulse">
+            C
+          </span>
+            <img
+              src="https://em-content.zobj.net/thumbs/240/apple/325/green-salad_1f957.png"
+              alt="🥗"
+              className="inline w-12 h-12"
+            />
+            <img
+              src="https://em-content.zobj.net/thumbs/240/apple/325/shallow-pan-of-food_1f958.png"
+              alt="🥘"
+              className="inline w-12 h-12"
+            />
+              <span className="bg-gradient-to-r from-gray-400 via-blue-500 to-blue-800 text-transparent bg-clip-text animate-pulse">
+                KING
+              </span>
+          </h1>
           <p className="text-xl mt-4">👋 Hey Master Chef!</p>
         </header>
 
