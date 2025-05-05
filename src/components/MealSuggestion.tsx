@@ -33,7 +33,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
 
     try {
       // Send mood and fetch recipes from n8n webhook
-      const response = await fetch('https://reddit-grocery-apps.app.n8n.cloud/webhook-test/4c199fb4-acaa-4049-9d6e-df72cd701d73', {
+      const response = await fetch('https://reddit-grocery-apps.app.n8n.cloud/webhook-test/59f9d156-fa42-40a2-8fee-19d1b7d07d40', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,19 +47,20 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
       });
 
       console.log('Response status:', response.status);
+      console.log('Response:', response);
 
       if(!response.ok){
         throw new Error('Failed to fetch recipes');
       }
 
       const data = await response.json();
-      console.log('Received recipes:', data);
+      // console.log('Received recipes:', data);
       console.log(data.output.recipes);
 
       setRecipes(data.output.recipes);
       toast.success('Recipes retrieved successfully!');
     } catch (error) {
-      console.error('Error sending mood:', error);
+      console.log('Error retrieving recipes:', error);
       toast.error('Failed to retrieve recipes. Please try again.');
     } finally {
       setLoading(false);
@@ -119,6 +120,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                     <CardTitle>{recipe.title}</CardTitle>
                     <CardDescription>{recipe.steps}</CardDescription>
                     <strong><CardDescription>⏱️ Time: {recipe.time}</CardDescription></strong>
+                    <CardDescription> 📺 YouTube URL: {recipe.youtube_url} </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <div>
