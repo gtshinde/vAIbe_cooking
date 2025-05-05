@@ -14,10 +14,12 @@ export interface GroceryItem {
 
 export interface Recipe {
   id: string;
+  youtube_url: string;
   title: string;
   steps: string;
   time: string;
   ingredients: string[];
+  query: string;
   // instructions: string[];
 }
 
