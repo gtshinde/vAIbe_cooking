@@ -15,9 +15,10 @@ interface MealSuggestionProps {
 }
 
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>(sampleRecipes);
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType[]>(['anything']);
+  const [recipeViewMode, setRecipeViewMode] = useState<'Text' | 'Video'>('Text');
 
   const handleMoodChange = (selectedMoods: MoodType[]) => {
     if(selectedMoods.length > 0){
@@ -118,21 +119,51 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                 <Card key={recipe.id} className="h-full">
                   <CardHeader>
                     <CardTitle>{recipe.title}</CardTitle>
-                    <CardDescription>{recipe.steps}</CardDescription>
-                    <strong><CardDescription>⏱️ Time: {recipe.time}</CardDescription></strong>
-                    <CardDescription> 📺 YouTube URL: {recipe.youtube_url} </CardDescription>
+                    <br />
+                    <div className="flex items-center space-x-4 mt-2">
+                      <div className="flex items-center bg-gray-200 rounded-full p-1">
+                        <button className={`px-4 py-1 rounded-full ${
+                          recipeViewMode === 'Text' ? 'bg-soft-blue text-white' : 'text-gray-700'
+                          }`}
+                          onClick={() => setRecipeViewMode('Text')}
+                        >
+                          Text
+                        </button>
+                        <button className={`px-4 py-1 rounded-full ${
+                          recipeViewMode === 'Video' ? 'bg-soft-blue text-white' : 'text-gray-700'
+                          }`}
+                          onClick={() => setRecipeViewMode('Video')}
+                        >
+                          Video
+                        </button>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <div>
-                      <h4 className="font-medium">Ingredients:</h4>
-                      <ul className="list-disc list-inside text-sm">
-                        {recipe.ingredients.map((ingredient, idx) => (
-                          <li key={idx} className={pantryItems.includes(ingredient) ? "text-soft-green" : ""}>
-                            {ingredient} {pantryItems.includes(ingredient) && "✓"}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    {recipeViewMode === 'Text' ? (
+                      <div>
+                        <CardDescription>{recipe.steps}</CardDescription>
+                        <br />
+                        <strong>
+                          <CardDescription>⏱️ Time: {recipe.time}</CardDescription>
+                        </strong>
+                        <br />
+                        <div>
+                          <h4 className="font-medium">Ingredients:</h4>
+                          <ul className="list-disc list-inside text-sm">
+                            {recipe.ingredients.map((ingredient, idx) => (
+                              <li key={idx} className={pantryItems.includes(ingredient) ? "text-soft-green" : "text-soft-orange"}>
+                                {ingredient} {pantryItems.includes(ingredient) && "✓"}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <CardDescription> 📺 YouTube URL: {recipe.youtube_url} </CardDescription>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
