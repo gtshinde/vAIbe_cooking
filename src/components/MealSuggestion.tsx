@@ -161,7 +161,14 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                       </div>
                     ) : (
                       <div>
-                        <CardDescription> 📺 YouTube URL: {recipe.youtube_url} </CardDescription>
+                        <iframe
+                          width="100%"
+                          height="200"
+                          src={`https://www.youtube.com/embed/${recipe.youtube_url.split('v=')[1]}`}
+                          title={recipe.title}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
                       </div>
                     )}
                   </CardContent>
