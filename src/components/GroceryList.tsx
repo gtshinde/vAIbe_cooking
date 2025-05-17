@@ -5,14 +5,16 @@ import { X, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '../utils/supabase-client';
-
+import GroceryRun from '@/components/GroceryRun';
 
 interface GroceryListProps {
   items: GroceryItem[];
   onUpdateItems: (items: GroceryItem[]) => void;
+  onGroceryRun: () => void;
+  lastGroceryRunDate: Date | null;
 }
 
-const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems }) => {
+const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroceryRun, lastGroceryRunDate }) => {
   const [newItemText, setNewItemText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -157,6 +159,12 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems }) => {
           className="flex-grow bg-transparent outline-none"
         />
       </form>
+      <div className="mt-6">
+          <GroceryRun 
+            onGroceryRun={onGroceryRun} 
+            lastGroceryRunDate={lastGroceryRunDate} 
+          />
+        </div>
     </div>
   );
 };

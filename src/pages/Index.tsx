@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PantryList from '@/components/PantryList';
 import GroceryList from '@/components/GroceryList';
 import MealSuggestion from '@/components/MealSuggestion';
-import GroceryRun from '@/components/GroceryRun';
+// import GroceryRun from '@/components/GroceryRun';
 import { PantryItem, GroceryItem } from '@/types';
 import { initialPantryItems, initialGroceryItems } from '@/data/initialData';
 import { supabase } from '../utils/supabase-client';
@@ -204,13 +204,8 @@ const Index = () => {
           <GroceryList 
             items={groceryItems} 
             onUpdateItems={setGroceryItems} 
-          />
-        </div>
-        
-        <div className="mt-6">
-          <GroceryRun 
-            onGroceryRun={handleGroceryRun} 
-            lastGroceryRunDate={lastGroceryRunDate} 
+            onGroceryRun={handleGroceryRun}
+            lastGroceryRunDate={lastGroceryRunDate}
           />
         </div>
       </div>
