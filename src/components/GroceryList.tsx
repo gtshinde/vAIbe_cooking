@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { GroceryItem } from '../types';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { X, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
@@ -17,7 +18,9 @@ interface GroceryListProps {
 const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroceryRun, lastGroceryRunDate }) => {
   const [newItemText, setNewItemText] = useState('');
   const [viewMode, setViewMode] = useState<'List' | 'Receipt'>('List');
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleToggleComplete = async (id: string) => {
@@ -107,6 +110,43 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleSubmitFile = async () => {
+    if (!uploadedFile) {
+      toast({description: "Please upload a file first." });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', uploadedFile);
+
+    try {
+      const response = await fetch(import.meta.env.VITE_N8N_FILE_UPLOAD_TEST_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast({ description: "File sent to n8n successfully!" });
+        setUploadedFile(null);
+      } else {
+        toast({ description: "Failed to send file to n8n." });
+      }
+    } catch (error) {
+      toast({ description: "Error sending file to n8n." });
+      console.error(error);
+    }
+  };
+
   // Keep focus on input after adding item
   useEffect(() => {
     if (newItemText === '' && inputRef.current) {
@@ -130,9 +170,10 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
             className={`px-4 py-1 rounded-full ${
               viewMode === 'Receipt' ? 'bg-soft-blue text-white' : 'text-gray-700'
             }`}
+            style={{ width: '16rem' }}
             onClick={() => setViewMode('Receipt')}
           >
-            🧾 Receipt
+            🔗 Upload Receipt
           </button>
         </div>
       </div>
@@ -190,8 +231,39 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
         </>
       ) : (
         <div className="text-center text-medium-gray py-12">
-          {/* Replace this with your actual receipt UI */}
-          <span>Receipt view coming soon!</span>
+          <span>Already purchased items from Walmart? <br /> </span>
+          <span> <br /> 
+            <div className="flex flex-col items-center">
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+              accept=".jpg,.jpeg,.png,.pdf,.txt,.csv" // adjust as needed
+            />
+            <Button
+              className="bg-soft-blue hover:bg-blue-500 text-white w-full py-6 mb-3 width:auto"
+              onClick={handleUploadClick}
+              type="button"
+              style={{ width: 'auto' }}
+            >
+              Upload Receipt 🔗
+            </Button>
+            {uploadedFile && (
+              <div className="mt-2 text-sm text-gray-700">
+                Selected: {uploadedFile.name}
+              </div>
+            )}
+            <Button
+              className="bg-soft-green hover:bg-green-500 text-white w-full py-6 mt-3"
+              onClick={handleSubmitFile}
+              type="button"
+              style={{ width: 'auto' }}
+            >
+              Submit! ✅
+            </Button>
+            </div>
+          </span>
         </div>
       )}
     </div>
