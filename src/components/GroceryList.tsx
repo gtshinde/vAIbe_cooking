@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { GroceryItem } from '../types';
+import { GroceryItem, PantryItem } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { X, Check, Link2 } from 'lucide-react';
@@ -13,9 +13,11 @@ interface GroceryListProps {
   onUpdateItems: (items: GroceryItem[]) => void;
   onGroceryRun: () => Promise<number>;
   lastGroceryRunDate: Date | null;
+  fetchPantryItems: () => Promise<any[]>;
+  setPantryItems: (pantryItems: PantryItem[]) => void;
 }
 
-const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroceryRun, lastGroceryRunDate }) => {
+const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroceryRun, lastGroceryRunDate, fetchPantryItems, setPantryItems }) => {
   const [newItemText, setNewItemText] = useState('');
   const [viewMode, setViewMode] = useState<'List' | 'Receipt'>('List');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -144,6 +146,12 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
       if (response.ok) {
         toast({ description: "File sent to n8n successfully!" });
         setUploadedFile(null);
+
+        // Fetch pantry items from Supabase
+        const pantryItems = await fetchPantryItems();
+        // set the pantry items in the state
+        setPantryItems(pantryItems);
+
       } else {
         toast({ description: "Failed to send file to n8n." });
       }

@@ -226,6 +226,8 @@ const Index = () => {
             onUpdateItems={setGroceryItems} 
             onGroceryRun={handleGroceryRun}
             lastGroceryRunDate={lastGroceryRunDate}
+            fetchPantryItems={fetchPantryItems}
+            setPantryItems={setPantryItems}
           />
         </div>
       </div>
