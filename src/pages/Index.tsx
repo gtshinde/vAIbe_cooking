@@ -135,8 +135,21 @@ const Index = () => {
 
     console.log("After restocking updated pantry items:", newPantryItems);
 
-    // insert the purchasedGroceryItems into Supabase
-    await insertPantryItems(newPantryItems);
+    // check if the newPantryItems already exist in the pantryItems
+    const existingPantryItems = pantryItems.filter(pantryItem =>
+      newPantryItems.some(newItem => newItem.item === pantryItem.item)
+    );
+
+    // console.log("Existing pantry items:", existingPantryItems);
+
+    // filter out those newPantryItems that don't already exist in the pantryItems
+    const newPantryItemsToInsert = newPantryItems.filter(newItem =>
+      !existingPantryItems.some(existingItem => existingItem.item === newItem.item)
+    );
+    console.log("New pantry items to insert:", newPantryItemsToInsert); 
+
+    // insert the newPantryItemsToInsert into Supabase
+    await insertPantryItems(newPantryItemsToInsert);
 
     // delete the newPantryItems from Supabase
     await deleteGroceryItems(purchasedGroceryItems);
