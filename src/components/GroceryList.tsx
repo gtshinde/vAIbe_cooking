@@ -79,13 +79,19 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     // Check if the input is empty
     if (newItemText.trim() === '') return;
 
+    // convert the newItemText to init caps
+    const formattedItemText = newItemText
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
     // Find the highest id in the current items
     const maxId = items.length > 0 ? Math.max(...items.map(item => parseInt(item.id))) : 0;
 
     const newItem: GroceryItem = {
       id: (maxId+1).toString(),
       created_at: new Date(),
-      item: newItemText.trim(),
+      item: formattedItemText.trim(),
       is_completed: false
     };
     
