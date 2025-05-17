@@ -15,7 +15,7 @@ interface MealSuggestionProps {
 }
 
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>(sampleRecipes);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType[]>(['anything']);
   const [recipeViewMode, setRecipeViewMode] = useState<'Text' | 'Video'>('Text');
@@ -34,7 +34,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
 
     try {
       // Send mood and fetch recipes from n8n webhook
-      const response = await fetch('https://reddit-grocery-apps.app.n8n.cloud/webhook-test/59f9d156-fa42-40a2-8fee-19d1b7d07d40', {
+      const response = await fetch(import.meta.env.VITE_N8N_PROD_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
