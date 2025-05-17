@@ -1,60 +1,73 @@
 
-import { PantryItem, GroceryItem } from '../types';
+import { PantryItem, GroceryItem, Recipe } from '../types';
 
 export const initialPantryItems: PantryItem[] = [
-  { id: '1', name: 'Tomatoes', quantity: '5 pcs' },
-  { id: '2', name: 'Milk', quantity: '1L' },
-  { id: '3', name: 'Bread', quantity: '2 loaves' },
-  { id: '4', name: 'Eggs', quantity: '2 dozen' },
-  { id: '5', name: 'Cheese', quantity: '500g' },
-  { id: '6', name: 'Chicken', quantity: '1 kg' },
-  { id: '7', name: 'Pasta', quantity: '500g' },
-  { id: '8', name: 'Onions', quantity: '3 pcs' },
+  { id: '1', item: 'Tomatoes' , created_at: new Date() },
+  { id: '2', item: 'Milk', created_at: new Date() },
+  { id: '3', item: 'Bread' , created_at: new Date() },
+  { id: '4', item: 'Eggs' , created_at: new Date() },
+  { id: '5', item: 'Cheese', created_at: new Date() },
+  { id: '6', item: 'Chicken' , created_at: new Date() },
+  { id: '7', item: 'Pasta', created_at: new Date() },
+  { id: '8', item: 'Onions' , created_at: new Date() },
 ];
 
 export const initialGroceryItems: GroceryItem[] = [
-  { id: '1', name: 'Rice', completed: false },
-  { id: '2', name: 'Yogurt', completed: false },
-  { id: '3', name: 'Butter', completed: false },
+  { id: '1', item: 'Rice', is_completed: false, created_at: new Date() },
+  { id: '2', item: 'Yogurt', is_completed: false, created_at: new Date() },
+  { id: '3', item: 'Butter', is_completed: false, created_at: new Date() },
 ];
 
-export const sampleRecipes = [
+export const sampleRecipes: Recipe[] = [
   {
-    id: '1',
-    title: 'Tomato & Egg Stir-fry',
-    description: 'A quick and comforting dish with tomatoes and eggs.',
-    ingredients: ['Tomatoes', 'Eggs', 'Salt', 'Pepper', 'Cooking oil'],
-    instructions: [
-      'Beat eggs in a bowl.',
-      'Slice tomatoes into wedges.',
-      'Heat oil in a pan, scramble eggs until 70% done, then remove.',
-      'In the same pan, stir-fry tomatoes until soft.',
-      'Add back eggs, season with salt and pepper, and cook for 1 more minute.'
-    ]
+    id: "1",
+    youtube_url: "https://www.youtube.com/watch?v=yzJp59jx4UY",
+    title: "Crunchy Potato and Cornflake Cutlets",
+    time: "25 minutes",
+    steps: "1. Boil and mash the potatoes.\n2. Mix in finely chopped onions, boiled green peas, and corn.\n3. Add crushed chili peppers and salt to taste.\n4. Shape the mixture into cutlets.\n5. Crush the cornflakes and coat the cutlets with them.\n6. Shallow fry or bake until golden brown and crunchy.",
+    ingredients: [
+      "Potatoes",
+      "Cereals - Cornflakes",
+      "Onions",
+      "Green Peas",
+      "Corn",
+      "Crushed Chili Peppers",
+      "Salt"
+    ],
+    query: "crunchy potato cornflake cutlets"
   },
   {
-    id: '2',
-    title: 'Simple Pasta with Cheese',
-    description: 'A basic pasta dish that\'s quick and satisfying.',
-    ingredients: ['Pasta', 'Cheese', 'Milk', 'Butter', 'Salt', 'Pepper'],
-    instructions: [
-      'Cook pasta according to package directions.',
-      'In a saucepan, melt butter and add milk.',
-      'Add grated cheese and stir until melted.',
-      'Season with salt and pepper.',
-      'Pour sauce over drained pasta and mix well.'
-    ]
+    id: "2",
+    youtube_url: "https://www.youtube.com/watch?v=0MShTeCsuQM",
+    title: "Masala Poha with Peanuts and Potato Chips",
+    time: "15 minutes",
+    steps: "1. Rinse the poha and set aside.\n2. Sauté mustard seeds and chopped onions.\n3. Add peanuts and sauté for a minute.\n4. Mix in the poha, crushed potato chips, crushed chili peppers, and salt.\n5. Cook for a few minutes until heated through.",
+    ingredients: [
+      "Poha",
+      "Onions",
+      "Mustard Seeds",
+      "Peanuts",
+      "Potato Chips",
+      "Crushed Chili Peppers",
+      "Salt"
+    ],
+    query: "with peanuts potato chips"
   },
   {
-    id: '3',
-    title: 'Chicken Sandwich',
-    description: 'A simple sandwich perfect for lunch or a light dinner.',
-    ingredients: ['Bread', 'Chicken', 'Tomatoes', 'Cheese', 'Butter'],
-    instructions: [
-      'Butter the bread slices.',
-      'Layer chicken, sliced tomatoes, and cheese.',
-      'Top with another slice of bread.',
-      'Grill or toast until bread is golden and cheese melts.'
-    ]
+    id: "3",
+    youtube_url: "https://www.youtube.com/watch?v=ZmxQmldGLOw",
+    title: "Cornflake Crusted Egg Omelette",
+    time: "10 minutes",
+    steps: "1. Whisk the eggs with chopped onions, bell peppers, crushed chili peppers, and salt.\n2. Crush the cornflakes\n3. Pour egg mixture into a pan. Sprinkle crushed cornflakes and place a cheese slice on top while cooking.\n4. Cook until the omelette is set and the cheese is melted.",
+    ingredients: [
+      "Eggs",
+      "Cereals - Cornflakes",
+      "Onions",
+      "Bell Peppers",
+      "Cheese Slices",
+      "Crushed Chili Peppers",
+      "Salt"
+    ],
+    query: "cornflake crusted egg omelette"
   }
 ];
