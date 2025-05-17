@@ -11,7 +11,7 @@ import GroceryRun from '@/components/GroceryRun';
 interface GroceryListProps {
   items: GroceryItem[];
   onUpdateItems: (items: GroceryItem[]) => void;
-  onGroceryRun: () => void;
+  onGroceryRun: () => Promise<number>;
   lastGroceryRunDate: Date | null;
 }
 

@@ -115,9 +115,14 @@ const Index = () => {
     }
   }
 
-  const handleGroceryRun = async () => {
+  const handleGroceryRun = async (): Promise<number> => {
     // Reset pantry to default values
     // setPantryItems(initialPantryItems);
+
+    // no items in the grocery list then return
+    if (groceryItems.length === 0) {
+      return -1;
+    }
 
     // find the largest id in the pantry items
     let pantryItemCount = pantryItems.length !== 0 ? Math.max(...pantryItems.map(item => parseInt(item.id))): 0;
@@ -161,6 +166,8 @@ const Index = () => {
     
     // Update last grocery run date
     setLastGroceryRunDate(new Date());
+
+    return 1;
   };
 
   // Extract just the pantry item names for recipe matching
