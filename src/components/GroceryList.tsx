@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GroceryItem } from '../types';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { X, Check } from 'lucide-react';
+import { X, Check, Link2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '../utils/supabase-client';
@@ -247,11 +247,11 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
               type="button"
               style={{ width: 'auto' }}
             >
-              Upload Receipt 🔗
+              Upload Receipt <Link2 className="ml-2" />
             </Button>
             {uploadedFile && (
-              <div className="mt-2 text-sm text-gray-700">
-                Selected: {uploadedFile.name}
+              <div className="mt-2 text-sm text-soft-green">
+                <strong> Selected: {uploadedFile.name} ✓ </strong>
               </div>
             )}
             <Button
@@ -260,7 +260,7 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
               type="button"
               style={{ width: 'auto' }}
             >
-              Submit! ✅
+              Submit! &nbsp;&nbsp;✅
             </Button>
             </div>
           </span>
