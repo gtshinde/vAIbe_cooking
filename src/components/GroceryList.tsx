@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { GroceryItem } from '../types';
+import { GroceryItem, PantryItem } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { X, Check, Link2 } from 'lucide-react';
@@ -11,11 +11,13 @@ import GroceryRun from '@/components/GroceryRun';
 interface GroceryListProps {
   items: GroceryItem[];
   onUpdateItems: (items: GroceryItem[]) => void;
-  onGroceryRun: () => void;
+  onGroceryRun: () => Promise<number>;
   lastGroceryRunDate: Date | null;
+  fetchPantryItems: () => Promise<any[]>;
+  setPantryItems: (pantryItems: PantryItem[]) => void;
 }
 
-const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroceryRun, lastGroceryRunDate }) => {
+const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroceryRun, lastGroceryRunDate, fetchPantryItems, setPantryItems }) => {
   const [newItemText, setNewItemText] = useState('');
   const [viewMode, setViewMode] = useState<'List' | 'Receipt'>('List');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -79,13 +81,19 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     // Check if the input is empty
     if (newItemText.trim() === '') return;
 
+    // convert the newItemText to init caps
+    const formattedItemText = newItemText
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+
     // Find the highest id in the current items
     const maxId = items.length > 0 ? Math.max(...items.map(item => parseInt(item.id))) : 0;
 
     const newItem: GroceryItem = {
       id: (maxId+1).toString(),
       created_at: new Date(),
-      item: newItemText.trim(),
+      item: formattedItemText.trim(),
       is_completed: false
     };
     
@@ -138,6 +146,12 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
       if (response.ok) {
         toast({ description: "File sent to n8n successfully!" });
         setUploadedFile(null);
+
+        // Fetch pantry items from Supabase
+        const pantryItems = await fetchPantryItems();
+        // set the pantry items in the state
+        setPantryItems(pantryItems);
+
       } else {
         toast({ description: "Failed to send file to n8n." });
       }

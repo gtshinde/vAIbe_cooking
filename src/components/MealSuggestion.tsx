@@ -97,7 +97,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
           <Button 
             className="w-full md:w-2/3 bg-soft-blue hover:bg-blue-600 text-white py-6 text-lg"
             onClick={handleSuggestMeals}
-            disabled={loading}
+            disabled={loading || pantryItems.length === 0}
           >
             {loading ? (
               <>
@@ -105,7 +105,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
               </>
             ) : (
               <>
-                <Utensils className="mr-2 h-5 w-5" /> Suggest what I can make
+                <Utensils className="mr-2 h-5 w-5" /> Suggest What I Can Cook
               </>
             )}
           </Button>
