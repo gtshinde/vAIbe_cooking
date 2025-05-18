@@ -1,0 +1,275 @@
+{
+  "name": "Vibe Cooking PDF Upload",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        680,
+        0
+      ],
+      "id": "e5ef9daf-f094-40cd-b284-27729b92399a",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a grocery list cleaner. Given a list of messy grocery product names, return a cleaned list of grocery item types, one per line. Always return the type of product a shopper would write on a grocery list (e.g., “cookies”, “milk”, “banana”).\n\nYou must identify only grocery-related items from the original list. In the cleaned list, you should not consider other items like sponge, t-shirt, shoes, garden tools or anything outside grocery — these must be excluded.\n\nIf multiple types of the same product exist (e.g., Digestive Cookies and Almond Cookies), do not deduplicate — include each distinct type.\n\nKeep culturally specific or regional food names (e.g., “Poha”, “Roti”, “Tikka”, “Kimchi”, “Noodles”) intact. Do not generalize them into broad categories like “rice” or “bread.”\n\nSimplify product names by removing brand names, packaging details, or quantities — but preserve the core identity of the food item.\n\nFor example:\n- “Lindt 70% Cacao Truffles” → “Chocolate”\n- “Shan Chicken Tikka Seasoning Mix” → “Tikka Seasoning”\n\nHere is the list:\n{{ $json.all_items.join(\"\\n\") }}\n\nOutput: (one cleaned product per line)\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "929bdbbd-92e8-4aef-bf8a-d22fd345163c",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1100,
+        200
+      ],
+      "id": "d8211160-ed1c-44d2-b976-f6be15f35aa6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4h7ayxSVGSHdEsAJ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "Pantry",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "item",
+              "fieldValue": "={{ $json.item }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2140,
+        0
+      ],
+      "id": "008e1317-6a2e-4b06-b9da-b37a1d02f928",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "//Instead of returning each item individually this code creates Array of Items\nconst raw = $json.text;\nconst lines = raw.split('\\n');\n\nconst itemLines = lines.filter(line =>\n  line.match(/Qty \\d+ \\$\\d+\\.\\d{2}$/)\n);\n\nconst cleanedItems = itemLines.map(line =>\n  line.replace(/Qty \\d+ \\$\\d+\\.\\d{2}$/, '').trim()\n);\n\nreturn [{\n  json: {\n    all_items: cleanedItems\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        0
+      ],
+      "id": "ea163068-c601-4dc2-9f15-76aee27b769d",
+      "name": "Extract Items from PDF-Create Array of Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// The AI Agent returns a single string like this:\n// \"``` \\nCereal\\nBanana\\nChocolate\\n... \\n```\"\n// We need to remove unwanted formatting and convert it to clean individual items.\n\nconst lines = $json.output\n  // Step 1: Remove triple backticks (```), which are often added by ChatGPT when responding with text blocks\n  .replace(/```/g, '')\n\n  // Step 2: Split the output string into an array of lines (one line per cleaned item)\n  .split('\\n')\n\n  // Step 3: Trim each line to remove leading/trailing spaces\n  .map(line => line.trim())\n\n  // Step 4: Filter out junk lines\n  .filter(line =>\n    line.length > 0 &&                      // Remove empty lines\n    line !== '...' &&                      // Remove literal ellipsis lines that sometimes show up\n    !line.toLowerCase().includes('output') // Remove lines like \"Output:\" or \"output:\" in case the model echoed your prompt\n  );\n\n// Step 5: Format each item as an individual output object so n8n can loop over them\nreturn lines.map(item => ({\n  json: { item } // Matches Supabase column \"item\"\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        0
+      ],
+      "id": "27d5ad2e-8f46-4c48-838d-1fb63d77f43c",
+      "name": "Split + Clean AI Output"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a8863f68-d28d-4f98-8213-b9c7bc3f4a09",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "d11aaf58-4fe0-4a92-9ea3-17ac47cdebdf",
+      "name": "Webhook",
+      "webhookId": "a8863f68-d28d-4f98-8213-b9c7bc3f4a09"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "Pantry",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "item",
+              "keyValue": "={{ $json.item }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        0
+      ],
+      "id": "2ada7c58-f286-4c03-9cae-bb8b95f9bdf9",
+      "name": "Returns Only Matching",
+      "executeOnce": false,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": " const newPantryItemsToInsert = $('Split + Clean AI Output').all().filter(newItem =>\n      !$input.all().some(existingItem => existingItem.json.item === newItem.json.item)\n    );\n\nreturn newPantryItemsToInsert;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "61154c2c-fe68-40fa-baef-32319465d1ba",
+      "name": "Returns Unmatched Only"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Extract Items from PDF-Create Array of Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Split + Clean AI Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Items from PDF-Create Array of Items": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split + Clean AI Output": {
+      "main": [
+        [
+          {
+            "node": "Returns Only Matching",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Returns Only Matching": {
+      "main": [
+        [
+          {
+            "node": "Returns Unmatched Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Returns Unmatched Only": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "38accfe7-586c-4bb7-8f3e-d57d0a0b551a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4b7d569930e0c75e41fd887fd31daa40194237df6113941e0066b4c9401aaefd"
+  },
+  "id": "G7bK5qMf0s5dpDGq",
+  "tags": []
+}
