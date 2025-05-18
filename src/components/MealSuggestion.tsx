@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -18,6 +17,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType[]>(['anything']);
+  const [specialInstructions, setSpecialInstructions] = useState<string>('');
   const [recipeViewMode, setRecipeViewMode] = useState<'Text' | 'Video'>('Text');
 
   const handleMoodChange = (selectedMoods: MoodType[]) => {
@@ -34,7 +34,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
 
     try {
       // Send mood and fetch recipes from n8n webhook
-      const response = await fetch(import.meta.env.VITE_N8N_PROD_URL, {
+      const response = await fetch(import.meta.env.VITE_N8N_TEST_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,6 +43,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
         body: JSON.stringify({
           "kitchen_inventory": pantryItems,
           mood: mood,
+          "special_instructions": specialInstructions,
           timestamp: new Date().toISOString(),
         }),
       });
@@ -78,7 +79,8 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
       <Separator className="my-4" />
       
       <div className="flex flex-col space-y-4">
-        <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
+        {/* Inputs Row */}
+        <div className="flex flex-col md:flex-row gap-4 items-center mb-4 w-full">
           <div className="w-full md:w-1/3">
             <MultiSelect 
               value={mood || []}
@@ -89,13 +91,24 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
               selectionLimit={2}
               selectAll={false}
               showSelectAll={false}
-              // selectAllLabel="Select up-to two moods"
-              
-             />
+              className="w-full border border-gray-300 rounded"
+            />
           </div>
-          
+          <div className="w-full md:w-2/3">
+            <input
+              type="text"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              placeholder="Optional: Add special instructions, preffered cuisine or dietary restrictions (50 characters max)"
+              value={specialInstructions}
+              onChange={ (e) => setSpecialInstructions(e.target.value) }
+              maxLength={50}
+            />
+          </div>
+        </div>
+        {/* Button Row */}
+        <div className="flex justify-center mb-4">
           <Button 
-            className="w-full md:w-2/3 bg-soft-blue hover:bg-blue-600 text-white py-6 text-lg"
+            className="md:w-1/3 bg-soft-blue hover:bg-blue-600 text-white py-6 text-lg rounded-full"
             onClick={handleSuggestMeals}
             disabled={loading || pantryItems.length === 0}
           >
