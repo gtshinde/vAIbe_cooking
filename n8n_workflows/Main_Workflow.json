@@ -1,0 +1,463 @@
+{
+  "name": "Main Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "59f9d156-fa42-40a2-8fee-19d1b7d07d40",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1280,
+        200
+      ],
+      "id": "61de6570-190c-4f77-8de1-2ca3ebf5aa2b",
+      "name": "Webhook",
+      "webhookId": "59f9d156-fa42-40a2-8fee-19d1b7d07d40"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        300
+      ],
+      "id": "c19a3653-1218-4b3d-916c-81b05240577b",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Special instruction - {{ $('Webhook').item.json.body.special_instructions }}\nMy available ingredients are: {{ $('Webhook').item.json.body.kitchen_inventory }}.\nSuggest recipes suitable for {{ $json.mealType }}. Today is a {{ $json.result }} so suggest {{ $json.result === 'Weekday' ? 'quick meals that can be prepared easily within 15–30 minutes.' : 'elaborate meals that can be richer, involve multiple components, and may take 45 mins or more to prepare.' }}\nYou must not fabricate or make up recipes — only suggest known recipes made globally.\nEach and every single recipe strictly must and should {{\n  $('Webhook').item.json.body.mood.length === 1\n    ? (\n        $('Webhook').item.json.body.mood[0] === 'simple'\n          ? 'clearly reflect the \"simple\" mood. Only suggest recipes that use a maximum of 3 ingredients and take less than 15 minutes to prepare.'\n          : 'clearly reflect the \"' + $('Webhook').item.json.body.mood[0] + '\" mood.'\n      )\n    : (\n        $('Webhook').item.json.body.mood.includes('simple')\n          ? 'clearly reflect BOTH \"' + $('Webhook').item.json.body.mood[0] + '\" AND \"' + $('Webhook').item.json.body.mood[1] + '\" moods — not just one. Also, because one of the moods is \"simple\", limit recipes to a maximum of 3 ingredients and 15 minutes to cook.'\n          : 'clearly reflect BOTH \"' + $('Webhook').item.json.body.mood[0] + '\" AND \"' + $('Webhook').item.json.body.mood[1] + '\" moods — not just one.'\n      )\n}}\n\nFor each recipe, provide:\n- Id\n- Title  \n- Steps \n- Time\n- Recipe Source\n- Ingredients used (only from the provided list)\n\n\n\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a globally-aware recipe assistant. You MUST prioritize user's special instruction above all.\nYour goal is to suggest real, existing recipes from around the world, based only on the information provided below. Do not invent or fabricate any new recipes. If you cannot make recipes just say \"can't provide the recipe\"\n\nSource Preference:\nYour preference must be to source recipes from https://www.budgetbytes.com. Only if a suitable recipe is not found there, may you rely on your own global culinary knowledge.\n\nOutput Requirement:\nYou must always suggest 3 recipes.\n\nConstraints:\nPrioritize the user’s mood when selecting recipes.\n\nUse only the provided kitchen ingredients. You may be flexible in how ingredients are used based on the mood, but do not introduce any ingredients that are not listed.\n\nBe thoughtful, culturally aware, and mood-sensitive in your recommendations. Also provide the source of the recipe if you can.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -860,
+        200
+      ],
+      "id": "80956329-1e68-4517-8555-e5bd4e779dc8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"recipes\": [\n    {\n      \"id\": 1,\n      \"title\": \"\",\n      \"steps\": \"\",\n      \"time\": \"\",\n      \"source\": \"\",\n      \"ingredients\": [\"ingredient1\", \n      \"ingredient2\"]\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -600,
+        400
+      ],
+      "id": "8cfcd1f7-402b-44d3-b6a4-6af346977e57",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        380
+      ],
+      "id": "4b6435c7-d778-41bd-b64b-287e78577a64",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7IwqwyztxZXro4Xp",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "This will:\n\nProperly extract all 3 recipes from the nested structure\n\nPrepare query fields for each\n\nPass them forward to your YouTube API call",
+        "height": 180,
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -520,
+        120
+      ],
+      "typeVersion": 1,
+      "id": "f4983aac-5be2-463b-8973-1aea9c24135d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json.query }} full recipe"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "maxResults",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -140,
+        120
+      ],
+      "id": "d825908d-0f39-47b6-92b9-dfb6807fe001",
+      "name": "HTTP Request",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "9qoMk2Lv9T2DCTFl",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        300,
+        300
+      ],
+      "id": "86d8f2a7-4ee3-4d02-816b-5679e6c035e4",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, index) => {\n  const videoId = item.json.items?.[0]?.id?.videoId;\n\n  return {\n    json: {\n      id: index + 1,\n      youtube_url: videoId ? `https://www.youtube.com/watch?v=${videoId}` : null,\n      videoId : videoId\n      /**\n       * What This Does:\nIf no video is found, youtube_url will be null\nThat way, you won’t break your flow — and the frontend can gracefully handle missing videos (e.g., by hiding the video section or showing a fallback message).\n       */\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        120
+      ],
+      "id": "9ebe6552-6521-405c-a1ac-4736b1000356",
+      "name": "Extract YouTube URLs with Index"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the list of recipes from the first item in the incoming data\nconst recipes = items[0].json.output.recipes;\n\n// Loop through each recipe and generate an optimized YouTube search query\nreturn recipes.map((recipe) => {\n  // Convert the recipe title to lowercase for consistent text processing\n  const title = recipe.title.toLowerCase();\n  let query = '';\n\n  // Check if the title contains the word \"and\"\n  if (title.includes(' and ')) {\n    // Split the title into two parts: before and after \"and\"\n    const [before, after] = title.split(' and ');\n\n    // From the part before \"and\", extract the last 2 words\n    const beforeKeywords = before.trim().split(' ').slice(-2).join(' ');\n\n    // From the part after \"and\", extract the first 2 words\n    const afterKeywords = after.trim().split(' ').slice(0, 2).join(' ');\n\n    // Combine the keywords into a YouTube-friendly search query\n    query = `${beforeKeywords} ${afterKeywords}`;\n  } else {\n    // If \"and\" is not present, use the entire title as the query\n    query = title.trim(); // Keep the full lowercase title\n  }\n\n  // Return the full recipe data along with the generated query\n  return {\n    json: {\n      id: recipe.id,\n      title: recipe.title,\n      time: recipe.time,\n      steps: recipe.steps,\n      ingredients: recipe.ingredients,\n      query: query\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        200
+      ],
+      "id": "e39b0814-f4ec-42f6-bac4-8c9e29004aa1",
+      "name": "Generate Optimized YouTube Queries"
+    },
+    {
+      "parameters": {
+        "content": "The reason for putting a code node is coz the UI expects the response in desired nested format with a single object containing an output.recipes array\n\n\n\n\nThis will:\nTake your existing array (each recipe is one item),\n\n\n\n\n\n\nExtract the json from each of those items (which is your recipe object),\n\nWrap them under a single object with the key output.recipes.",
+        "height": 220,
+        "width": 200
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        440,
+        160
+      ],
+      "typeVersion": 1,
+      "id": "2d0f7e99-3591-4c98-951c-8bcf34746174",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This script wraps the flat array of recipe objects into the desired nested structure\nreturn [\n  {\n    json: {\n      output: {\n        recipes: items.map(item => item.json)\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ],
+      "id": "6f6800fb-ca0a-4385-86e2-f7e66cb4e01e",
+      "name": "Structure Recipes Response for UI"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst timeZone = 'America/New_York'; // Define once to avoid repetition\n\n// Extract the current hour (in 24-hour format) in EST for meal time classification\nconst estHour = parseInt(now.toLocaleString('en-US', {\n  timeZone,\n  hour: '2-digit',\n  hour12: false\n}), 10);\n\n// Get day name in EST to determine if it's a weekday or weekend\nconst dayName = now.toLocaleString('en-US', {\n  timeZone,\n  weekday: 'long'\n});\n\nconst isWeekend = (dayName === 'Saturday' || dayName === 'Sunday');\nconst result = isWeekend ? 'Weekend' : 'Weekday';\n\n// Format current time in EST (e.g., \"10:27 PM\") for UI display\nconst estFormattedTime = now.toLocaleTimeString('en-US', {\n  timeZone,\n  hour: '2-digit',\n  minute: '2-digit',\n  hour12: true\n});\n\n// Classify meal type based on the current EST hour\nlet mealType = '';\nif (estHour >= 5 && estHour < 11) {\n  mealType = 'Breakfast';\n} else if (estHour >= 11 && estHour < 16) {\n  mealType = 'Lunch';\n} else if (estHour >= 16 && estHour < 24) {\n  mealType = 'Dinner';\n} else {\n  mealType = 'Snack';\n}\n\n// Output values for use in n8n or UI\nreturn [\n  {\n    json: {\n      mealType: mealType,\n      formattedTime: estFormattedTime,\n      result: result  // \"Weekday\" or \"Weekend\"\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1060,
+        200
+      ],
+      "id": "d5ba5749-e4ab-480e-96cb-3d251c72253d",
+      "name": "Assign Basic Parameters"
+    },
+    {
+      "parameters": {
+        "content": "This path is for getting the youtube video url",
+        "height": 80,
+        "width": 320,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "7d74fc86-6cee-4586-a0c5-5742ad195072",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "This path is for getting the main recipe body from the LLM",
+        "height": 80,
+        "width": 420,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -220,
+        380
+      ],
+      "typeVersion": 1,
+      "id": "f5e26179-457e-4cfd-96e3-64e835b81358",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "status"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.videoId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        300,
+        120
+      ],
+      "id": "1025770f-5b3f-4f24-8010-0eec341667d2",
+      "name": "HTTP Request1",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "9qoMk2Lv9T2DCTFl",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.headers[\"x-real-ip\"] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -740,
+        420
+      ],
+      "id": "e76f8414-4aa7-4ab6-a1cb-475cb85fbd21",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Assign Basic Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Optimized YouTube Queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract YouTube URLs with Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Structure Recipes Response for UI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract YouTube URLs with Index": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Optimized YouTube Queries": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Structure Recipes Response for UI": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assign Basic Parameters": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c7556570-c0ab-48eb-9dc2-0a3756dc97ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4b7d569930e0c75e41fd887fd31daa40194237df6113941e0066b4c9401aaefd"
+  },
+  "id": "93wjoG2NwTBoOO3F",
+  "tags": [
+    {
+      "createdAt": "2025-05-17T18:02:11.036Z",
+      "updatedAt": "2025-05-17T18:02:11.036Z",
+      "id": "ZzmT3Lhg98iXuRw2",
+      "name": "working"
+    },
+    {
+      "createdAt": "2025-05-17T18:02:11.014Z",
+      "updatedAt": "2025-05-17T18:02:11.014Z",
+      "id": "brswCnqZN6lC7Khw",
+      "name": "used_in_UI"
+    }
+  ]
+}
