@@ -400,12 +400,14 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
 const LoadingGif = () => (
   <div className="flex flex-col items-center justify-center py-8">
     <img
-      src="/dancing_loading.gif"
+      // src="/dancing_loading.gif"
+      src="/Veggies_GIF.gif"
       alt="Loading animation"
-      className="w-128 h-128"
+      // className="w-128 h-128"
+      className="w-96 h-96"
       style={{ objectFit: 'contain' }}
     />
-    <span className="text-lg text-soft-blue font-semibold">Cooking up your recipes...</span>
+    <span className="text-xl font-semibold">Cooking up your recipes...</span>
   </div>
 );
 
