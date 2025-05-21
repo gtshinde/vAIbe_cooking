@@ -3,9 +3,9 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Recipe, MoodType, moods } from '../types';
-import { sampleRecipes } from '../data/initialData';
+import { sampleRecipes, sampleSweetRecipes } from '../data/initialData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Utensils, LoaderCircle } from 'lucide-react';
+import { Utensils, LoaderCircle, ChevronLeft, ChevronRight, Image as ImageIcon, Clock } from 'lucide-react';
 import { toast } from "sonner";
 import { MultiSelect } from 'primereact/multiselect';
 
@@ -14,11 +14,12 @@ interface MealSuggestionProps {
 }
 
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>(sampleRecipes);
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType[]>(['anything']);
   const [specialInstructions, setSpecialInstructions] = useState<string>('');
   const [recipeViewMode, setRecipeViewMode] = useState<'Text' | 'Video'>('Text');
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useState(0);
 
   const handleMoodChange = (selectedMoods: MoodType[]) => {
     if(selectedMoods.length > 0){
@@ -69,6 +70,19 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
     }
     
   };
+
+  const handlePrevRecipe = () => {
+    setCurrentRecipeIdx((prev) => (prev === 0 ? recipes.length - 1 : prev - 1));
+  };
+
+  const handleNextRecipe = () => {
+    setCurrentRecipeIdx((prev) => (prev === recipes.length - 1 ? 0 : prev + 1));
+  };
+
+  // Reset index if recipes change
+  React.useEffect(() => {
+    setCurrentRecipeIdx(0);
+  }, [recipes]);
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm">
@@ -125,68 +139,145 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
         </div>
         
         {recipes.length > 0 && !loading && (
-          <div className="space-y-4 mt-4">
-            <h3 className="text-lg font-medium">Recipe Suggestions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {recipes.map((recipe) => (
-                <Card key={recipe.id} className="h-full">
-                  <CardHeader>
-                    <CardTitle>{recipe.title}</CardTitle>
-                    <br />
-                    <div className="flex items-center space-x-4 mt-2">
-                      <div className="flex items-center bg-gray-200 rounded-full p-1">
-                        <button className={`px-4 py-1 rounded-full ${
-                          recipeViewMode === 'Text' ? 'bg-soft-blue text-white' : 'text-gray-700'
+          <div className="flex justify-center mt-6">
+            <div className="relative w-full max-w-5xl">
+              {/* Left Arrow */}
+              <button
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow p-2 hover:bg-gray-100"
+                onClick={handlePrevRecipe}
+                aria-label="Previous Recipe"
+              >
+                <ChevronLeft size={32} />
+              </button>
+
+              {/* Recipe Card */}
+              <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-white my-8">
+                <CardHeader>
+                  <CardTitle className="text-center text-2xl">{recipes[currentRecipeIdx].title}</CardTitle>
+                  <br /> <br />
+                  {/* Prep & Cook Time and Toggle Row */}
+                  <div className="flex items-center justify-between mt-2 mb-4 w-full">
+                    {/* Left: Centered Prep & Cook Time */}
+                    <div className="flex-1 flex justify-center items-center">
+                      <Clock className="mr-2 text-gray-500" size={20} />
+                      <span className="text-gray-500 text-base">
+                        {recipes[currentRecipeIdx].time}
+                      </span>
+                    </div>
+                    {/* Right: Centered Toggle */}
+                    <div className="flex-1 flex justify-center items-center">
+                      <div className="flex items-center bg-gray-200 rounded-full p-1" style={{width: '14rem'}}>
+                        <Button
+                          className={`px-4 py-1 rounded-full ${
+                            recipeViewMode === 'Text' ? 'bg-soft-blue text-white' : 'bg-soft-gray text-gray-700'
                           }`}
                           onClick={() => setRecipeViewMode('Text')}
+                          style={{ width: '50%' }}
                         >
                           Text
-                        </button>
-                        <button className={`px-4 py-1 rounded-full ${
-                          recipeViewMode === 'Video' ? 'bg-soft-blue text-white' : 'text-gray-700'
+                        </Button>
+                        <Button
+                          className={`px-4 py-1 rounded-full ${
+                            recipeViewMode === 'Video' ? 'bg-soft-blue text-white' : 'bg-soft-gray text-gray-700'
                           }`}
                           onClick={() => setRecipeViewMode('Video')}
+                          disabled={!recipes[currentRecipeIdx].youtube_url}
+                          style={{ width: '50%' }}
                         >
                           Video
-                        </button>
+                        </Button>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {recipeViewMode === 'Text' ? (
-                      <div>
-                        <CardDescription>{recipe.steps}</CardDescription>
-                        <br />
-                        <strong>
-                          <CardDescription>⏱️ Time: {recipe.time}</CardDescription>
-                        </strong>
-                        <br />
-                        <div>
-                          <h4 className="font-medium">Ingredients:</h4>
-                          <ul className="list-disc list-inside text-sm">
-                            {recipe.ingredients.map((ingredient, idx) => (
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {recipeViewMode === 'Text' ? (
+                    <div>
+                      {/* Steps & Image Side by Side */}
+                      <div className="flex flex-col md:flex-row mb-4">
+                        {/* Steps Section */}
+                        <div className="w-full md:w-1/2 mb-4 md:mb-0 md:pr-4">
+                          <h4 className="font-semibold mb-1">Steps:</h4>
+                          <ol className="list-none list-inside text-base space-y-1">
+                            {typeof recipes[currentRecipeIdx].steps === 'string'
+                              ? recipes[currentRecipeIdx].steps
+                                  .split('\n')
+                                  .map((step, idx) => <li key={idx}>{step.trim()}</li>)
+                              : null}
+                          </ol>
+                        </div>
+                        {/* Image Section */}
+                        <div className="w-full md:w-1/2 flex justify-center items-center">
+                          {recipes[currentRecipeIdx].url ? (
+                            <img
+                              src={recipes[currentRecipeIdx].url}
+                              alt={recipes[currentRecipeIdx].title}
+                              className="rounded-lg object-cover w-80 h-80 border shadow-2xl"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center w-64 h-40 bg-gray-100 rounded-lg border">
+                              <ImageIcon size={48} className="text-gray-400" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {/* Ingredients & Calories */}
+                      <div className="flex justify-between mt-4">
+                        <div className='w-1/2 justify-center pl-4 pr-4'>
+                          <h4 className="font-semibold mb-1">Ingredients:</h4>
+                          <ul className="list-disc list-inside text-base">
+                            {recipes[currentRecipeIdx].ingredients.map((ingredient, idx) => (
                               <li key={idx} className={pantryItems.includes(ingredient) ? "text-soft-green" : "text-soft-orange"}>
                                 {ingredient} {pantryItems.includes(ingredient) && "✓"}
                               </li>
                             ))}
                           </ul>
                         </div>
+                        <div className="w-1/2 flex flex-col justify-center pl-4">
+                          <h4 className="font-semibold mb-1">Nutritional Information:</h4>
+                          <ul className="list-disc list-inside text-base">
+                            {recipes[currentRecipeIdx].nutrition.map((nutrient, idx) => (
+                              <li key={idx} className="text-soft-blue">
+                                {nutrient}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
-                    ) : (
-                      <div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-full">
+                      <h4 className="font-semibold mb-1">Watch A Similar Recipe Video:</h4>
+                      {/* Video Section */}
+                      {recipes[currentRecipeIdx].youtube_url ? (
                         <iframe
                           width="100%"
-                          height="200"
-                          src={`https://www.youtube.com/embed/${recipe.youtube_url.split('v=')[1]}`}
-                          title={recipe.title}
+                          height="384"
+                          src={`https://www.youtube.com/embed/${recipes[currentRecipeIdx].youtube_url.split('v=')[1]}`}
+                          title={recipes[currentRecipeIdx].title}
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen
-                        ></iframe>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                          className="rounded-lg w-full max-w-2xl shadow-2xl"
+                        ></iframe> 
+                      ) : (
+                        <div className="text-gray-500">No video available for this recipe.</div>
+                      )}
+                      <p className="text-sm text-gray-500 mt-2">
+                          Note: This video is a similar recipe recommendation & it may not be exactly the same.
+                        </p> 
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Right Arrow */}
+              <button
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow p-2 hover:bg-gray-100"
+                onClick={handleNextRecipe}
+                aria-label="Next Recipe"
+              >
+                <ChevronRight size={32} />
+              </button>
             </div>
           </div>
         )}
