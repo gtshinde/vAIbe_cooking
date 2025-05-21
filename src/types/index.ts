@@ -20,7 +20,8 @@ export interface Recipe {
   time: string;
   ingredients: string[];
   query: string;
-  // instructions: string[];
+  nutrition: string[];
+  url: string;
 }
 
 export type MoodType = 
