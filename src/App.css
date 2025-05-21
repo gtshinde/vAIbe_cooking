@@ -2,7 +2,6 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 .logo {
@@ -39,4 +38,22 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Add to your global CSS */
+.bg-soft-skyblue {
+  background-color: #4890E2 /* Or any soft blue you prefer */
+}
+.thought-bubble {
+  position: relative;
+}
+.thought-tail {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+@keyframes spin-slow {
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
 }
