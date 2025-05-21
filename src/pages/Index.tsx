@@ -175,7 +175,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-very-light-gray">
-      <div className="container max-w-6xl mx-auto py-8 px-1">
+      <div className="container max-w-8xl mx-auto py-8 px-1">
         <header className="mb-8">
           <h1 className="text-5xl font-georgia font-semibold text-center text-white">
           <span className="bg-gradient-to-r from-gray-400 via-blue-500 to-blue-800 text-transparent bg-clip-text animate-pulse">
