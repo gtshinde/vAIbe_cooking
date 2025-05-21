@@ -21,25 +21,38 @@ export interface Recipe {
   ingredients: string[];
   query: string;
   nutrition: string[];
+  fun_fact: string;
   url: string;
 }
 
 export type MoodType = 
-  | 'sweet'
-  | 'anything'
-  | 'spicy'
-  | 'crunchy'
-  | 'bland'
-  | 'simple'
-  | 'homely'
+  | '🍽️ anything'
+  | '🤒 bland'
+  | '🤤 crunchy'
+  | '🧘 healthy'
+  | '😇 homely'
+  | '🤪 go crazy'
+  | '🥗 light'
+  | '🥱 lazy'
+  | '🍾 party'
+  | '🍩 sweet'
+  | '🌶️ spicy'
+  | '🥫 simple'
+  | '🤩 surprise me!'
   ;
 
 export const moods: MoodType[] = [
-  'sweet',
-  'anything',
-  'spicy',
-  'crunchy', 
-  'bland',
-  'simple',
-  'homely'
+  '🍽️ anything',
+  '🤒 bland',
+  '🤤 crunchy',
+  '🧘 healthy',
+  '😇 homely',
+  '🤪 go crazy',
+  '🥗 light',
+  '🥱 lazy',
+  '🍾 party',
+  '🍩 sweet',
+  '🌶️ spicy',
+  '🥫 simple',
+  '🤩 surprise me!'
 ];
