@@ -24,7 +24,7 @@ export const sampleRecipes: Recipe[] = [
     youtube_url: "https://www.youtube.com/watch?v=yzJp59jx4UY",
     title: "Crunchy Potato and Cornflake Cutlets",
     time: "Prep Time: 20 minutes, Cook Time: 30 minutes",
-    steps: "1. Boil and mash the potatoes.\n2. Mix in finely chopped onions, boiled green peas, and corn.\n3. Add crushed chili peppers and salt to taste.\n4. Shape the mixture into cutlets.\n5. Crush the cornflakes and coat the cutlets with them.\n6. Shallow fry or bake until golden brown and crunchy.",
+    steps: "Boil and mash the potatoes.\n Mix in finely chopped onions, boiled green peas, and corn.\n Add crushed chili peppers and salt to taste.\n Shape the mixture into cutlets.\n Crush the cornflakes and coat the cutlets with them.\n Shallow fry or bake until golden brown and crunchy.",
     ingredients: [
       "Potatoes",
       "Cereals - Cornflakes",
@@ -43,6 +43,7 @@ export const sampleRecipes: Recipe[] = [
       "Sodium: 300mg",
       "Fiber: 7g"
     ],
+    fun_fact: "Cornflakes were invented in the late 19th century as a health food.",
     url: "https://chatgpt.com/backend-api/public_content/enc/eyJpZCI6Im1fNjgyYTUxYmRjNWI0ODE5MWE2MmUxYTAwZDZhNmRjNWE6ZmlsZV8wMDAwMDAwMDA4ZTg2MWZkOTRkZjBiZWZmZGQ0YTRmZCIsInRzIjoiNDg1NDQ1IiwicCI6InB5aSIsInNpZyI6ImZkMjM5ZjdkOWU3OTAwMjUwZGRmNjgzOGQyNDhhMTY5OTc2MTY5ZmY2NzA2M2IzOThmMWRiMmMyZGMxNjc1N2MiLCJ2IjoiMCIsImdpem1vX2lkIjpudWxsfQ==", 
     query: "crunchy potato cornflake cutlets"
   },
@@ -70,6 +71,7 @@ export const sampleRecipes: Recipe[] = [
       "Sodium: 150mg",
       "Fiber: 5g"
     ],
+    fun_fact: "Poha is a popular breakfast dish in India, made from flattened rice.",
     url: "https://videos.openai.com/vg-assets/assets%2Ftask_01jvjyw4heeqcacn8jkhqer10e%2F1747614360_img_1.webp?st=2025-05-18T22%3A59%3A23Z&se=2025-05-24T23%3A59%3A23Z&sks=b&skt=2025-05-18T22%3A59%3A23Z&ske=2025-05-24T23%3A59%3A23Z&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skoid=3d249c53-07fa-4ba4-9b65-0bf8eb4ea46a&skv=2019-02-02&sv=2018-11-09&sr=b&sp=r&spr=https%2Chttp&sig=Eg17oVDeS%2FztQuKBpaKl7NM%2FQjYeLNg%2Fp3I%2BH0FeMO8%3D&az=oaivgprodscus",
     query: "with peanuts potato chips"
   },
@@ -97,6 +99,7 @@ export const sampleRecipes: Recipe[] = [
       "Sodium: 200mg",
       "Fiber: 2g"
     ],
+    fun_fact: "Conrnflakes were originally created as a health food to promote vegetarianism.",
     url: "https://videos.openai.com/vg-assets/assets%2Ftask_01jvjz4qy3ftdbtvdpy5kj10aq%2F1747614638_img_0.webp?st=2025-05-18T23%3A01%3A04Z&se=2025-05-25T00%3A01%3A04Z&sks=b&skt=2025-05-18T23%3A01%3A04Z&ske=2025-05-25T00%3A01%3A04Z&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skoid=3d249c53-07fa-4ba4-9b65-0bf8eb4ea46a&skv=2019-02-02&sv=2018-11-09&sr=b&sp=r&spr=https%2Chttp&sig=r4rw%2B7iYwgxrafDZt2WXKDaRBGgHwEwakEkdoJzuT1Y%3D&az=oaivgprodscus",
     query: "cornflake crusted egg omelette"
   }
@@ -127,6 +130,7 @@ export const sampleIndianRecipes: Recipe[] = [
       "Pepper",
       "Roti"
     ],
+    fun_fact: "Aloo Palak is a popular North Indian dish made with potatoes and spinach.",
     "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-QkRtiguVt1KuBV7upKqg9Wb2.png?st=2025-05-18T21%3A18%3A14Z&se=2025-05-18T23%3A18%3A14Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-17T22%3A58%3A29Z&ske=2025-05-18T22%3A58%3A29Z&sks=b&skv=2024-08-04&sig=p/58Yw0NzKpNtrJxqJTLRPsQWWJUwFEW%2BoM8XVf21mM%3D",
     "query": "Aloo Palak with Roti"
   },
@@ -155,6 +159,7 @@ export const sampleIndianRecipes: Recipe[] = [
       "Roti",
       "Rice Crackers"
     ],
+    fun_fact: "Okra is a rich source of vitamins A and C, and is known for its health benefits.",
     "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-8mexYjIhzliCGTng2wemwQJG.png?st=2025-05-18T21%3A18%3A29Z&se=2025-05-18T23%3A18%3A29Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-18T03%3A49%3A11Z&ske=2025-05-19T03%3A49%3A11Z&sks=b&skv=2024-08-04&sig=kmhU%2BaVW7S0Mp13JURQ3bPefoybbLm6429Elrz4yOXs%3D",
     "query": "Okra Tomato Sabzi"
   },
@@ -180,6 +185,7 @@ export const sampleIndianRecipes: Recipe[] = [
       "Chili Peppers",
       "Onions"
     ],
+    fun_fact: "Yogurt rice is a popular South Indian dish, often served as a cooling side.",
     "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-Zq6bqr8b9e8x2o1bVUMDr5P2.png?st=2025-05-18T21%3A18%3A46Z&se=2025-05-18T23%3A18%3A46Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-17T23%3A09%3A55Z&ske=2025-05-18T23%3A09%3A55Z&sks=b&skv=2024-08-04&sig=emXlauGaNe2UpTCNnPd/4N%2B1adL58xvZQejwgisR2ZA%3D",
     "query": "Yogurt Rice with Tadka"
   }
@@ -210,6 +216,7 @@ export const sampleChineseRecipes: Recipe[] = [
       "Ginger",
       "Garlic"
     ],
+    fun_fact: "Tofu is a great source of protein and is often used in vegetarian dishes.",
     "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-xigDGlHHUhGrHPGBT7wkL5a3.png?st=2025-05-18T21%3A26%3A05Z&se=2025-05-18T23%3A26%3A05Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-18T00%3A44%3A37Z&ske=2025-05-19T00%3A44%3A37Z&sks=b&skv=2024-08-04&sig=0VQVg07ohlu4Bh3I/KIiYJxvuyH2r9/YcUrFpILbITk%3D",
     "query": "Tofu Bok Choy"
   },
@@ -235,6 +242,7 @@ export const sampleChineseRecipes: Recipe[] = [
       "Garlic",
       "Soy Sauce"
     ],
+    fun_fact: "Chow Mein is a popular Chinese dish made with stir-fried noodles and vegetables.",
     "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-jeENnaM5jpsUWPa0pbpDEYYC.png?st=2025-05-18T21%3A26%3A16Z&se=2025-05-18T23%3A26%3A16Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-18T22%3A26%3A16Z&ske=2025-05-19T22%3A26%3A16Z&sks=b&skv=2024-08-04&sig=2k6Y8dLSw7lpvPZIa4eqapqy6aguL9eaY5okyelLeCs%3D",
     "query": "Spicy Chinese Chow Mein"
   },
@@ -261,6 +269,7 @@ export const sampleChineseRecipes: Recipe[] = [
       "Ginger",
       "Garlic"
     ],
+    fun_fact: "Egg fried rice is a popular dish in Chinese cuisine, often served as a side or main dish.",
     "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-LhzTNaBR05UWwBe2T3NcEhkQ.png?st=2025-05-18T21%3A26%3A29Z&se=2025-05-18T23%3A26%3A29Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-18T07%3A49%3A40Z&ske=2025-05-19T07%3A49%3A40Z&sks=b&skv=2024-08-04&sig=seHPnB9ov5mYFIqgmOeQKbnwiTGR/UqL2G43WeQf7wE%3D",
     "query": "Egg Fried Rice with Spring Onions"
   }
@@ -283,6 +292,7 @@ export const sampleSweetRecipes: Recipe[] = [
             "Fiber: 5g"
           ],
           ingredients: [],
+          fun_fact: "Nutella was invented in the 1940s in Italy and has become a global favorite.",
           "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-BCK7wpxDkOk3WxofIeXfGFaW.png?st=2025-05-19T02%3A21%3A44Z&se=2025-05-19T04%3A21%3A44Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-18T21%3A48%3A58Z&ske=2025-05-19T21%3A48%3A58Z&sks=b&skv=2024-08-04&sig=iLeY3k1/tgk45wwdNpE6R8j7vnr/tpeBbXB8QhX99iw%3D",
           "query": "Chocolate Nutella Almond Cookie"
         },
@@ -302,6 +312,7 @@ export const sampleSweetRecipes: Recipe[] = [
             "Fiber: 4g"
           ],
           ingredients: [],
+          fun_fact: "Alfredo sauce was created in Rome in the early 20th century and is now popular worldwide.",
           "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-yyCJGJ9z07JC0rnw3W8wQoZO.png?st=2025-05-19T02%3A21%3A56Z&se=2025-05-19T04%3A21%3A56Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-18T03%3A25%3A50Z&ske=2025-05-19T03%3A25%3A50Z&sks=b&skv=2024-08-04&sig=z7dD49BwZAk4yNZlvdb6fzPnmK8ewX/aUl1wj8uJlaM%3D",
           "query": "Crumbled Cookies Whipped Cream"
         },
@@ -320,6 +331,7 @@ export const sampleSweetRecipes: Recipe[] = [
             "Sodium: 300mg",
             "Fiber: 3g"
           ],
+          fun_fact: "Rice pudding has been enjoyed for centuries and is a comfort food in many cultures.",
           ingredients: [],
           "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ugycE3NHftBliOHBVZySan0t/user-XReIwrLdITHc5B5okNQNlpjc/img-gF73zdgTiNaXCdqNcivwF7PK.png?st=2025-05-19T02%3A22%3A10Z&se=2025-05-19T04%3A22%3A10Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=8b33a531-2df9-46a3-bc02-d4b1430a422c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-19T02%3A19%3A37Z&ske=2025-05-20T02%3A19%3A37Z&sks=b&skv=2024-08-04&sig=%2BLTXuOa/jgMMquOOGRyU32RwZwLPWh86QEJZATVnFz8%3D",
           "query": "Nutella Swirl Rice Cracker"
