@@ -3,7 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Recipe, MoodType, moods } from '../types';
-import { sampleRecipes, sampleSweetRecipes } from '../data/initialData';
+import { sampleRecipes, sampleSweetRecipes, recentRecipes } from '../data/initialData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Utensils, LoaderCircle, ChevronLeft, ChevronRight, Image as ImageIcon, Clock } from 'lucide-react';
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ interface MealSuggestionProps {
 }
 
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>(sampleRecipes);
+  const [recipes, setRecipes] = useState<Recipe[]>(recentRecipes);
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType[]>(['🍽️ anything']);
   const [specialInstructions, setSpecialInstructions] = useState<string>('');
@@ -113,10 +113,10 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
             <input
               type="text"
               className="w-full border border-gray-300 rounded px-3 py-2"
-              placeholder="Optional: Add special instructions, preffered cuisine or dietary restrictions (50 characters max)"
+              placeholder="(Optional) Add special instructions: Gluten-free? Extra spicy? Tell me here! (80 characters max)"
               value={specialInstructions}
               onChange={ (e) => setSpecialInstructions(e.target.value) }
-              maxLength={50}
+              maxLength={80}
             />
           </div>
         </div>
@@ -240,8 +240,8 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                             <div className="flex flex-col md:flex-row mb-4">
                               {/* Steps Section */}
                               <div className="w-full md:w-1/2 mb-4 md:mb-0 md:pr-4">
-                                <h4 className="font-semibold mb-1 text-xl text-left">Steps:</h4>
-                                <ol className="list-decimal list-inside text-xl space-y-1 text-left">
+                                <h4 className="font-semibold mb-1 text-left">Steps:</h4>
+                                <ol className="list-decimal list-inside space-y-1 text-left">
                                   {typeof recipes[currentRecipeIdx].steps === 'string'
                                     ? recipes[currentRecipeIdx].steps
                                         .split('\n')
