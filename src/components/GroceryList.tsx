@@ -144,7 +144,7 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
       });
 
       if (response.ok) {
-        toast({ description: "File sent to n8n successfully!" });
+        toast({ description: "Uploaded Walmart items to the pantry successfully!" });
         setUploadedFile(null);
 
         // Fetch pantry items from Supabase
@@ -178,7 +178,7 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
             }`}
             onClick={() => setViewMode('List')}
           >
-            📝 Grocery Shopping List
+            🛍️ Need To Buy
           </button>
           <button
             className={`px-4 py-1 rounded-full ${
@@ -195,7 +195,11 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
 
       {viewMode === 'List' ? (
         <>
-          <ul className="space-y-2 mb-4">
+          { items.length === 0 ? (
+            <p className="text-medium-gray text-center py-4">Your grocery list is empty.</p>
+
+          ) : (
+            <ul className="space-y-2 mb-4">
             {items.map((item) => (
               <li key={item.id} className="flex items-center gap-2 py-2">
                 <button 
@@ -224,6 +228,7 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
               </li>
             ))}
           </ul>
+          )}
           
           <form onSubmit={handleAddItem} className="flex items-center border-t pt-4">
             <span className="text-medium-gray mr-2">➕</span>
@@ -232,7 +237,7 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
               type="text"
               value={newItemText}
               onChange={(e) => setNewItemText(e.target.value)}
-              placeholder="Add new item here (enter to add)"
+              placeholder="What else do we need? (enter to add)"
               className="flex-grow bg-transparent outline-none"
             />
           </form>
