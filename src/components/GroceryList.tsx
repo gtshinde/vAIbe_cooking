@@ -39,6 +39,8 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
       if (error) {
         console.log("Error updating item in Supabase:", error);
         toast({
+          variant: "destructive",
+          title: "Error",
           description: "Error updating item in Supabase",
         });
         return;
@@ -50,6 +52,8 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     onUpdateItems(updatedItems);
 
     toast({
+      variant: "success",
+      title: "Success",
       description: "Item status updated in grocery list"
     })
   };
@@ -63,6 +67,8 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     if(error){
       console.log("Error deleting item from Supabase:", error);
       toast({
+        variant: "destructive",
+        title: "Error",
         description: "Error deleting item from Supabase"
       });
       return;
@@ -72,6 +78,8 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     onUpdateItems(updatedItems);
 
     toast({
+      variant: "success",
+      title: "Success",
       description: "Item removed from grocery list"
     });
   };
@@ -105,6 +113,8 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     if(error) {
       console.log("Error inserting new item:", error);
       toast({
+        variant: "destructive",
+        title: "Error",
         description: "Error adding item to Supabase",
       });
       return;
@@ -114,6 +124,8 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
     setNewItemText('');
     
     toast({
+      variant: "success",
+      title: "Success",
       description: "Item added to grocery list",
     });
   };
@@ -130,7 +142,11 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
 
   const handleSubmitFile = async () => {
     if (!uploadedFile) {
-      toast({description: "Please upload a file first." });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please upload a file first." 
+      });
       return;
     }
 
@@ -144,7 +160,11 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
       });
 
       if (response.ok) {
-        toast({ description: "Uploaded Walmart items to the pantry successfully!" });
+        toast({ 
+          variant: "success",
+          title: "Success",
+          description: "Uploaded Walmart items to the pantry successfully!" 
+        });
         setUploadedFile(null);
 
         // Fetch pantry items from Supabase
@@ -153,10 +173,18 @@ const GroceryList: React.FC<GroceryListProps> = ({ items, onUpdateItems, onGroce
         setPantryItems(pantryItems);
 
       } else {
-        toast({ description: "Failed to send file to n8n." });
+        toast({ 
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to send file to n8n." 
+        });
       }
     } catch (error) {
-      toast({ description: "Error sending file to n8n." });
+      toast({ 
+        variant: "destructive",
+        title: "Error",
+        description: "Error sending file to n8n." 
+      });
       console.error(error);
     }
   };

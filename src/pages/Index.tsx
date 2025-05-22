@@ -34,6 +34,7 @@ const Index = () => {
     if(error){
       console.log("Error fetching grocery items:", error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Error fetching grocery items from Supabase"
       });
@@ -94,6 +95,7 @@ const Index = () => {
     if (error) {
       console.log("Error inserting pantry items:", error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Error inserting pantry items into Supabase"
       });
@@ -109,6 +111,7 @@ const Index = () => {
     if (error) {
       console.log("Error deleting grocery items:", error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Error deleting grocery items from Supabase"
       });

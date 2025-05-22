@@ -6,7 +6,8 @@ import { Recipe, MoodType, moods } from '../types';
 import { sampleRecipes, sampleSweetRecipes, recentRecipes } from '../data/initialData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Utensils, LoaderCircle, ChevronLeft, ChevronRight, Image as ImageIcon, Clock } from 'lucide-react';
-import { toast } from "sonner";
+// import { toast } from "sonner";
+import { useToast } from '@/components/ui/use-toast';
 import { MultiSelect } from 'primereact/multiselect';
 import '../App.css';
 
@@ -22,13 +23,19 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
   const [recipeViewMode, setRecipeViewMode] = useState<'Text' | 'Video'>('Text');
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState(0);
 
+  const { toast } = useToast();
+
   const handleMoodChange = (selectedMoods: MoodType[]) => {
     if(selectedMoods.length > 0){
       setMood(selectedMoods);
     } else{
       setMood(['🍽️ anything']);
     }
-    toast.success('Food mood updated!');
+    toast({ 
+      variant: "success",
+      title: "Success",
+      description: "Food mood updated!"
+    });
   };
 
   const handleSuggestMeals = async () => {
@@ -62,10 +69,18 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
       console.log(data.output.recipes);
 
       setRecipes(data.output.recipes);
-      toast.success('Recipes retrieved successfully!');
+      toast({ 
+        variant: "success",
+        title: "Success",
+        description: "Recipes retrieved successfully!"
+      });
     } catch (error) {
       console.log('Error retrieving recipes:', error);
-      toast.error('Failed to retrieve recipes. Please try again.');
+      toast({ 
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to retrieve recipes. Please try again."
+      });
     } finally {
       setLoading(false);
     }
