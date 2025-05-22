@@ -337,3 +337,83 @@ export const sampleSweetRecipes: Recipe[] = [
           "query": "Nutella Swirl Rice Cracker"
         }
 ]
+
+export const recentRecipes: Recipe[] = [
+        {
+          "id": "1",
+          "youtube_url": "https://www.youtube.com/watch?v=QTvp7KECo6o",
+          "title": "Garlic & Chili Spinach Pasta with Cheese",
+          "steps": "Cook chopped garlic (4 cloves) and sliced chili peppers (1) in olive oil until fragrant.\nAdd spinach (5 oz) and cook until wilted.\nBoil jasmine rice (1 cup) until cooked, then drain and add to the spinach mixture. Stir well.\nStir in grated cheese (1/2 cup) until melted. Toss and serve immediately.",
+          "time": "Prep Time: 5 mins, Cook Time: 15 mins",
+          "nutrition": [
+            "Serving: 1 person",
+            "Calories: 350kcal",
+            "Carbohydrates: 45g",
+            "Protein: 15g",
+            "Fat: 12g",
+            "Sodium: 200mg",
+            "Fiber: 5g"
+          ],
+          "ingredients": [
+            "Spinach",
+            "Garlic",
+            "Chili Peppers",
+            "Jasmine Rice",
+            "Cheese"
+          ],
+          "fun_fact": "Did you know that garlic can help lower cholesterol levels? 🧄",
+          "query": "Garlic & Chili Spinach Pasta with Cheese",
+          "url": null
+        },
+        {
+          "id": "2",
+          "youtube_url": "https://www.youtube.com/watch?v=OFANJsVBrMM",
+          "title": "Potato & Onion Omelette with a Zesty Lemon Twist",
+          "steps": "Slice potatoes (2 medium) and onions (1 medium) thinly.\nSauté the sliced potatoes and onions in olive oil until softened and lightly browned.\nWhisk eggs (3) with a squeeze of lemon juice (1 tbsp) and salt and pepper.\nPour the egg mixture over the potatoes and onions in the pan. Cook over low heat until the eggs are set but still slightly soft on top.\nFlip the omelette carefully and cook for another 2 minutes. Serve warm with a sprinkle of chopped parsley.",
+          "time": "Prep Time: 10 mins, Cook Time: 20 mins",
+          "nutrition": [
+            "Serving: 1 person",
+            "Calories: 400kcal",
+            "Carbohydrates: 30g",
+            "Protein: 15g",
+            "Fat: 25g",
+            "Sodium: 250mg",
+            "Fiber: 3g"
+          ],
+          "ingredients": [
+            "Potatoes",
+            "Onions",
+            "Eggs",
+            "Lemons"
+          ],
+          "fun_fact": "Potatoes were one of the first crops grown in space! 🥔🚀",
+          "query": "Potato & Onion Omelette with a Zesty Lemon Twist",
+          "url": null
+        },
+        {
+          "id": "3",
+          "youtube_url": "https://www.youtube.com/watch?v=M7s6kyxm54E",
+          "title": "Tomato, Cheese & Romaine Lettuce Salad with a Yogurt Dressing",
+          "steps": "Slice tomatoes (2 medium) and cheese (4 oz) into bite-sized pieces.\nTear romaine lettuce (4 cups) into smaller, manageable pieces.\nArrange the tomatoes, cheese, and romaine lettuce on a plate.\nIn a small bowl, mix yogurt (1/2 cup) with a squeeze of lemon juice (1 tbsp), salt, and pepper to create a dressing. Drizzle over the salad.\nGarnish with a sprinkle of cracked black pepper and serve immediately.",
+          "time": "Prep Time: 10 mins, Cook Time: 0 mins",
+          "nutrition": [
+            "Serving: 1 person",
+            "Calories: 250kcal",
+            "Carbohydrates: 10g",
+            "Protein: 20g",
+            "Fat: 15g",
+            "Sodium: 300mg",
+            "Fiber: 3g"
+          ],
+          "ingredients": [
+            "Tomatoes",
+            "Cheese",
+            "Romaine Lettuce",
+            "Yogurt",
+            "Lemons"
+          ],
+          "fun_fact": "Tomatoes are technically fruits, not vegetables, because they develop from the flower of the tomato plant! 🍅",
+          "query": "Tomato, Cheese & Romaine Lettuce Salad with a Yogurt Dressing",
+          "url": null
+        }
+      ]
