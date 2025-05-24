@@ -16,7 +16,7 @@ interface MealSuggestionProps {
 }
 
 const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
-  const [recipes, setRecipes] = useState<Recipe[]>(recentRecipes);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [mood, setMood] = useState<MoodType[]>(['🍽️ anything']);
   const [specialInstructions, setSpecialInstructions] = useState<string>('');
@@ -42,17 +42,19 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
     setLoading(true);
 
     try {
-      // Send mood and fetch recipes from n8n webhook
+      // Ensure mood array always has two items
+      let moodsToSend = mood.length === 1 ? [mood[0], mood[0]] : mood;
+      // Remove emoji and space from each mood
+      const moodsPayload = moodsToSend.map((m) => m.replace(/^[^\w\d]+/, '').trim());
       const response = await fetch(import.meta.env.VITE_N8N_TEST_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // mode: 'no-cors', 
         body: JSON.stringify({
-          "kitchen_inventory": pantryItems,
-          mood: mood.slice(2), // Removes the emoji and the space before the mood
-          "special_instructions": specialInstructions,
+          // "kitchen_inventory": pantryItems,
+          "mood": moodsPayload,
+          "special_instructions": specialInstructions || 'none',
           timestamp: new Date().toISOString(),
         }),
       });
@@ -140,7 +142,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
           <Button 
             className="md:w-1/3 bg-soft-blue hover:bg-blue-600 text-white py-6 text-lg rounded-full"
             onClick={handleSuggestMeals}
-            disabled={loading || pantryItems.length === 0}
+            disabled={loading || pantryItems.length < 5}
           >
             {loading ? (
               <>
@@ -177,11 +179,14 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                 {/* Carousel Cards */}
                 <div className="flex items-center justify-center transition-all duration-300">
                   {/* Previous Card Preview */}
-                  <div className="hidden sm:block w-1/6 opacity-60 scale-95 pointer-events-none -mr-4">
+                  <div className="hidden sm:block w-1/8 opacity-60 scale-95 pointer-events-none -mr-4">
                     <Card className="shadow bg-gray-100">
                       <CardHeader>
                         <CardTitle className="truncate text-base">
-                          {recipes[(currentRecipeIdx - 1 + recipes.length) % recipes.length].title}
+                          {(() => {
+                            const prevTitle = recipes[(currentRecipeIdx - 1 + recipes.length) % recipes.length].title;
+                            return prevTitle.length > 12 ? prevTitle.slice(0, 12) + '...' : prevTitle;
+                          })()}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -201,7 +206,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                   </div>
 
                   {/* Main Card */}
-                  <div className="w-full sm:w-4/6 z-10">
+                  <div className="w-full sm:w-6/8 z-10">
                     <Card className="w-full max-w-6xl mx-auto shadow-2xl bg-white my-8">
                       <CardHeader>
                         <div className="flex items-center justify-between w-full">
@@ -256,7 +261,7 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                               {/* Steps Section */}
                               <div className="w-full md:w-1/2 mb-4 md:mb-0 md:pr-4">
                                 <h4 className="font-semibold mb-1 text-left">Steps:</h4>
-                                <ol className="list-decimal list-inside space-y-1 text-left">
+                                <ol className="list-none list-inside space-y-1 text-left">
                                   {typeof recipes[currentRecipeIdx].steps === 'string'
                                     ? recipes[currentRecipeIdx].steps
                                         .split('\n')
@@ -320,10 +325,10 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                                 <img
                                   src= { 
                                       currentRecipeIdx === 0 ? 
-                                        "/chef_image.png" 
+                                        "/chef_image_3.png" 
                                         : currentRecipeIdx === 1 ? 
                                         "/chef_image_2.png"
-                                        : "chef_image_3.png"
+                                        : "chef_image.png"
                                   }
                                   alt="AI Chef"
                                   className={ currentRecipeIdx ===1 ? "w-45 h-40" : "w-45 h-45"}
@@ -370,11 +375,14 @@ const MealSuggestion: React.FC<MealSuggestionProps> = ({ pantryItems }) => {
                   </div>
 
                   {/* Next Card Preview */}
-                  <div className="hidden sm:block w-1/6 opacity-60 scale-95 pointer-events-none -ml-4">
+                  <div className="hidden sm:block w-1/8 opacity-60 scale-95 pointer-events-none -ml-4">
                     <Card className="shadow bg-gray-100">
                       <CardHeader>
                         <CardTitle className="truncate text-base">
-                          {recipes[(currentRecipeIdx + 1) % recipes.length].title}
+                          {(() => {
+                            const nextTitle = recipes[(currentRecipeIdx + 1) % recipes.length].title;
+                            return nextTitle.length > 12 ? nextTitle.slice(0, 12) + '...' : nextTitle;
+                          })()}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
