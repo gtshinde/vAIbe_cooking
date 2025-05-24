@@ -31,7 +31,6 @@ export type MoodType =
   | '🤤 crunchy'
   | '🧘 healthy'
   | '😇 homely'
-  | '🤪 go crazy'
   | '🥗 light'
   | '🥱 lazy'
   | '🍾 party'
@@ -47,7 +46,6 @@ export const moods: MoodType[] = [
   '🤤 crunchy',
   '🧘 healthy',
   '😇 homely',
-  '🤪 go crazy',
   '🥗 light',
   '🥱 lazy',
   '🍾 party',
