@@ -34,6 +34,7 @@ const Index = () => {
     if(error){
       console.log("Error fetching grocery items:", error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Error fetching grocery items from Supabase"
       });
@@ -94,6 +95,7 @@ const Index = () => {
     if (error) {
       console.log("Error inserting pantry items:", error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Error inserting pantry items into Supabase"
       });
@@ -109,6 +111,7 @@ const Index = () => {
     if (error) {
       console.log("Error deleting grocery items:", error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Error deleting grocery items from Supabase"
       });
@@ -175,7 +178,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-very-light-gray">
-      <div className="container max-w-6xl mx-auto py-8 px-1">
+      <div className="container max-w-8xl mx-auto py-8 px-1">
         <header className="mb-8">
           <h1 className="text-5xl font-georgia font-semibold text-center text-white">
           <span className="bg-gradient-to-r from-gray-400 via-blue-500 to-blue-800 text-transparent bg-clip-text animate-pulse">
