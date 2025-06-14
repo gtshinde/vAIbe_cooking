@@ -1,6 +1,13 @@
 # Local env files (containing passwords/ api keys)
 .env
 
+# Mac system files
+.DS_Store
+# Windows system files
+Thumbs.db
+# Linux system files
+*~
+
 # Logs
 logs
 *.log

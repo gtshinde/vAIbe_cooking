@@ -24,6 +24,8 @@ const PantryList: React.FC<PantryListProps> = ({ items, onUpdateItems }) => {
     if(error){
       console.log("Error deleting item from Supabase:", error);
       toast({
+        variant: "destructive",
+        title: "Error",
         description: "Error deleting item from Supabase"
       });
       return;
@@ -34,6 +36,8 @@ const PantryList: React.FC<PantryListProps> = ({ items, onUpdateItems }) => {
     onUpdateItems(updatedItems);
 
     toast({
+      variant: "success",
+      title: "Success",
       description: "Item deleted from pantry list"
     });
   };
@@ -42,7 +46,7 @@ const PantryList: React.FC<PantryListProps> = ({ items, onUpdateItems }) => {
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h2 className="text-xl mb-4">🥫 Pantry List (Home Stock)</h2>
+      <h2 className="text-xl mb-4">🥫 In Your Kitchen...</h2>
       <Separator className="my-4" />
       
       {items.length === 0 ? (
