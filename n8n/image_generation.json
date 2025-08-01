@@ -1,0 +1,193 @@
+{
+  "name": "image_generation",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -120,
+        -140
+      ],
+      "id": "0709c92e-2939-4411-b6a7-cc106f7232fc",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "model": "gpt-image-1",
+        "prompt": "=Create the final recipe look , based on the recipe details below- \nTitle- {{ $json.title }}\nIngredients- {{ $json.ingredients }}\n\n",
+        "options": {
+          "quality": "medium",
+          "size": "1024x1024",
+          "returnImageUrls": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -240,
+        220
+      ],
+      "id": "f70394d3-6122-4f8f-918d-4bbc3f8b67a4",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "mymhgWKdiPoSMpuM",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "image_urls",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $('When Executed by Another Workflow').item.json.id }}"
+            },
+            {
+              "fieldId": "image_url",
+              "fieldValue": "={{ $json.url }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        340,
+        -140
+      ],
+      "id": "5da1d805-eb5b-40c4-89ef-a95761a04307",
+      "name": "Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "=Create the final recipe look , based on the recipe details below- \nTitle- {{ $json.title }}\nIngredients- {{ $json.ingredients }}\nGenerate a high-quality, photorealistic image only. Artistic, cartoon, or illustrated styles are strictly not allowed.",
+        "options": {
+          "size": "1024x1024",
+          "returnImageUrls": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        120,
+        -140
+      ],
+      "id": "cac96002-aab9-461c-aa78-3984bfd5a861",
+      "name": "OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "mymhgWKdiPoSMpuM",
+          "name": "OpenAi account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        200,
+        140
+      ],
+      "id": "5245b2f0-a0a1-4f4d-88ed-77067fefbcc4",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        420,
+        140
+      ],
+      "id": "1043d632-d4b0-42de-9e8d-2861eeb29e7d",
+      "name": "Extract from File"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI": {
+      "main": [
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "01f28345-0e10-4f40-86dc-43d0b536af93",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4b7d569930e0c75e41fd887fd31daa40194237df6113941e0066b4c9401aaefd"
+  },
+  "id": "zcnkvZzy74pHf4pk",
+  "tags": [
+    {
+      "createdAt": "2025-05-17T18:02:11.036Z",
+      "updatedAt": "2025-05-17T18:02:11.036Z",
+      "id": "ZzmT3Lhg98iXuRw2",
+      "name": "working"
+    }
+  ]
+}

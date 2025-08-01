@@ -1,0 +1,771 @@
+{
+  "name": "Main Workflow-Image",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0dc034da-d4b0-44eb-bb02-d1c710d03178",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1320,
+        180
+      ],
+      "id": "7305bbc7-0a70-4dc4-85f1-469434eaf152",
+      "name": "Webhook",
+      "webhookId": "0dc034da-d4b0-44eb-bb02-d1c710d03178"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2300,
+        300
+      ],
+      "id": "9bdadc84-9c45-447e-aa3d-e34bb92f0b30",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Special instruction: {{ $('Webhook').item.json.body.special_instructions }}\nThe meal type is {{ $json.mealType }}.\nSo suggest {{ $json.result === 'Weekday' ? 'quick meals that can be prepared easily within 15–30 minutes.' : 'elaborate meals that can be richer, involve multiple components, and may take 45 mins or more to prepare.' }} \nEach and every single recipe strictly must and should {{\n  $('Webhook').item.json.body.mood.length === 1\n    ? (\n        $('Webhook').item.json.body.mood[0] === 'simple'\n          ? 'clearly reflect the \"simple\" mood. Only suggest recipes that use a maximum of 3 ingredients and take less than 15 minutes to prepare.'\n          : 'clearly reflect the \"' + $('Webhook').item.json.body.mood[0] + '\" mood.'\n      )\n    : (\n        $('Webhook').item.json.body.mood.includes('simple')\n          ? 'clearly reflect BOTH \"' + $('Webhook').item.json.body.mood[0] + '\" AND \"' + $('Webhook').item.json.body.mood[1] + '\" moods — not just one. Also, because one of the moods is \"simple\", limit recipes to a maximum of 3 ingredients and 15 minutes to cook.'\n          : 'clearly reflect BOTH \"' + $('Webhook').item.json.body.mood[0] + '\" AND \"' + $('Webhook').item.json.body.mood[1] + '\" moods — not just one.'\n      )\n}}\n\n",
+        "options": {
+          "systemMessage": "=You are a globally-aware recipe assistant who ALWAYS prioritizes BOTH user's special instruction AND user mood above all.\nInput sanity‑check\nIf the special instruction does not describe a dietary restriction, cuisine, cooking method, or ingredient preference or is not related to recipe ignore it and return recipes based only on mood + ingredients. \n\nIf mood and instruction conflict, instruction wins.\n\nYou must always return 3 real recipes from global cuisines. Use only verifiable recipes commonly found on recognized cooking websites or cookbooks. Do not fabricate dish names. \n\nTool Usage Rules\n1.\tCall Ingredients_List once at the beginning with an empty input ({}) to retrieve available ingredients.\n2.\tStore and reuse the ingredient list throughout — do not call the tool again under any circumstance.\n3.\tGenerate all 3 recipes using the same retrieved list. Refer to it from memory, not by re-calling the tool.\n4.\tUse the food_moods tool once per user input to fetch mood-specific cooking behavior. Cache its output for use during the session.\n5.\tDo not make multiple calls to food_moods for the same mood — query once and apply its behavior across all recipes.\n6.\tCombine outputs from both tools (Ingredients_List and food_moods) to generate personalized, mood-aware recipes based on available ingredients.\n\n\n\nConstraints:\n* Assume basic condiments such as salt, pepper, oil, sugar, soy sauce, Italian herbs (oregano, basil), Cumin seeds, Garam masala and common dry spices are already there by default with the user.\n* Provide Prep Time & Cook Time.\n* Use only the provided kitchen ingredients. You may be flexible in how ingredients are used based on the mood, but do not introduce any ingredients that are not listed.\n* Include exact quantities for each ingredient you suggest to use in the recipe. You must include the ingredients quantity in the recipe steps only. Do NOT include it in the ingredients list.\n* Provide nutritional info in this format:\n {\n\"Serving\": \"1 person\",\n\"Calories\": \"350kcal\",\n\"Carbohydrates\": \"45g\",\n\"Protein\": \"15g\",\n\"Fat\": \"12g\",\n\"Sodium\": \"200mg\",\n\"Fiber\": \"5g\"\n}\n* Display a 1–2 line fact (not a commonly known one) or joke based on ingredients used in the recipe, with a light emoji or icon for visual flair. It should be random and new for each recipe.\n\nEach recipe must include:\n* id - Eg: 1, 2, 3\n* source\n* title - *form a simple title that includes top 2/3 ingredients from the recipe* \n* steps - Eg:  [\"1. Cook chopped... \", \"2. Boil...\", ...]\n* time - \"Prep Time is 30 mins, Cook Time is 45 mins\"\n* nutrition - { }\n* ingredients (only from the list) - []\n* fun_fact - Eg: \"xyz..\"\n\nPRE-PROCESSING REQUIREMENT:\nYou must output a valid, structured JSON object — not markdown or text.\nDo not wrap your response in triple backticks or any markdown formatting.\nDo not return text before or after the JSON.\nYour response must be a raw JSON object that directly conforms to the schema.\nNo minified responses allowed\nDo not explain, apologize, or justify in natural language.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -840,
+        180
+      ],
+      "id": "56bf151c-93de-4827-a95e-d877c17a8b89",
+      "name": "AI Agent",
+      "notes": "FAILURE CASE HANDLING:\nIf you are unable to suggest exactly 3 real recipes based on the provided ingredients and constraints, follow this rule:\n1. Do not return only 1 or 2 recipes.\n2. Do not explain, apologize, or justify in natural language.\nInstead, you must return a structured JSON object with 3 recipe objects, where:\n1. Any recipe that could not be generated must have all fields filled with blank strings (\"\") or [\"\"] for arrays.\n2. Valid recipes (if any) can be filled normally in the same list.\nDo not output anything outside the JSON block."
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "youTubeOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json.query }} full recipe"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "maxResults",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        120
+      ],
+      "id": "25065826-f21a-439d-a925-6352ebcaff50",
+      "name": "HTTP Request",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "9qoMk2Lv9T2DCTFl",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1680,
+        300
+      ],
+      "id": "1d619db7-82e1-42bd-8ddc-9ee95eda46e9",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map((item, index) => {\n  const videoId = item.json.items?.[0]?.id?.videoId;\n\n  return {\n    json: {\n      id: index + 1,\n      youtube_url: videoId ? `https://www.youtube.com/watch?v=${videoId}` : null,\n      videoId : videoId\n      /**\n       * What This Does:\nIf no video is found, youtube_url will be null\nThat way, you won’t break your flow — and the frontend can gracefully handle missing videos (e.g., by hiding the video section or showing a fallback message).\n       */\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1480,
+        120
+      ],
+      "id": "343b1b4b-5366-483a-bf34-37ce39b02237",
+      "name": "Extract YouTube URLs with Index"
+    },
+    {
+      "parameters": {
+        "jsCode": "const recipes = $(\"FormatItems For ImageAssistant\")\n  .all()\n  .map((item) => item.json);\n\nconst imageData = $input.all().map((item) => item.json);\n\nconst updatedRecipes = recipes.map((recipe) => {\n  const img = imageData.find((img) => img.id === recipe.id);\n  if (img) {\n    recipe.image_url = img.image_url;\n  }\n\n  // Generate YouTube Search Query from title\n  const title = recipe.title.trim();\n  let searchQuery = \"\";\n\n  if (title.toLowerCase().includes(\" and \")) {\n    const parts = title.split(/ and /i);\n    const before = parts[0].trim().split(\" \");\n    const after = parts[1].trim().split(\" \");\n    const lastTwoBefore = before.slice(-2);\n    const firstTwoAfter = after.slice(0, 2);\n    searchQuery = [...lastTwoBefore, ...firstTwoAfter].join(\" \");\n  } else {\n    searchQuery = title;\n  }\n\n  recipe.query = searchQuery;\n\n  // Rename image_url → url for downstream compatibility\n  recipe.url = recipe.image_url;\n  delete recipe.image_url;\n\n  return recipe;\n});\n\nreturn updatedRecipes;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        180
+      ],
+      "id": "6e78002e-5e8e-4761-b734-8810e24bb086",
+      "name": "Generate Optimized YouTube Queries"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This script wraps the flat array of recipe objects into the desired nested structure\nconst items = $('Merge').all();\nreturn [\n  {\n    json: {\n      output: {\n        recipes: items.map(item => item.json)\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2060,
+        300
+      ],
+      "id": "e1a98eef-dae2-48a1-bf8e-767b661ebbc9",
+      "name": "Structure Recipes Response for UI"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst timeZone = 'America/New_York'; // Define once to avoid repetition\n\n// Extract the current hour (in 24-hour format) in EST for meal time classification\nconst estHour = parseInt(now.toLocaleString('en-US', {\n  timeZone,\n  hour: '2-digit',\n  hour12: false\n}), 10);\n\n// Get day name in EST to determine if it's a weekday or weekend\nconst dayName = now.toLocaleString('en-US', {\n  timeZone,\n  weekday: 'long'\n});\n\nconst isWeekend = (dayName === 'Saturday' || dayName === 'Sunday');\nconst result = isWeekend ? 'Weekend' : 'Weekday';\n\n// Format current time in EST (e.g., \"10:27 PM\") for UI display\nconst estFormattedTime = now.toLocaleTimeString('en-US', {\n  timeZone,\n  hour: '2-digit',\n  minute: '2-digit',\n  hour12: true\n});\n\n// Classify meal type based on the current EST hour\nlet mealType = '';\nif (estHour >= 5 && estHour < 11) {\n  mealType = 'Breakfast';\n} else if (estHour >= 11 && estHour < 16) {\n  mealType = 'Lunch';\n} else if (estHour >= 16 && estHour < 24) {\n  mealType = 'Dinner';\n} else {\n  mealType = 'Snack';\n} \nmealType = 'Dinner'; //testing purpose only\n// Output values for use in n8n or UI\nreturn [\n  {\n    json: {\n      mealType: mealType,\n      formattedTime: estFormattedTime,\n      result: result,  // \"Weekday\" or \"Weekend\"\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1060,
+        180
+      ],
+      "id": "5e93d38e-f4ed-48e6-8130-20b8a70b67d6",
+      "name": "Assign Basic Parameters"
+    },
+    {
+      "parameters": {
+        "content": "This path is for getting the youtube video url",
+        "height": 80,
+        "width": 180,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1180,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "d848380f-e294-4494-83f9-4480de7d5166",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "This path is for getting the main recipe body from the LLM",
+        "height": 80,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1320,
+        420
+      ],
+      "typeVersion": 1,
+      "id": "88333096-132b-410e-852c-5c7de08cf4e5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "jsCode": "//To Convert 1 item into 3 separate Items\nreturn $input.first().json.output.recipes"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        180
+      ],
+      "id": "887ddb22-414c-4173-be71-0f51eaebe052",
+      "name": "FormatItems For ImageAssistant"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawJson = $input.first().json.output;\n\n// Step 1: Clean the triple-backtick wrapper and parse the JSON string\nconst cleaned = rawJson.replace(/```json|```/g, '').trim();\nconst parsed = JSON.parse(cleaned);\n\n// Step 2: Transform each recipe to match expected output format\nconst transformedRecipes = parsed.recipes.map((recipe) => {\n  // console.log(recipe['ingredients used']);\n  return {\n    id: parseInt(recipe.id),\n    title: recipe.title,\n    steps: recipe.steps.join('\\n'), // join array to single string\n    time: recipe.time.replace('Prep Time is ', 'Prep Time: ').replace('Cook Time is ', 'Cook Time: '),\n    nutrition: Object.entries(recipe.nutrition).map(([key, value]) => `${key}: ${value}`), // object to array of strings\n    //ingredients: Array.isArray(recipe['ingredients used']) ? recipe['ingredients used'] : []\n    ingredients: Array.isArray(recipe['ingredients']) \n  ? recipe['ingredients'] \n  : (Array.isArray(recipe['ingredients used']) ? recipe['ingredients used'] : []),\n   fun_fact: recipe.fun_fact\n  };\n});\n\n// Step 3: Return formatted output\nreturn [\n  {\n    json: {\n      output: {\n        recipes: transformedRecipes\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        180
+      ],
+      "id": "862aac2e-046a-4191-ae49-371b080d3ce0",
+      "name": "Recipe Output Formatter"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "zcnkvZzy74pHf4pk",
+          "mode": "list",
+          "cachedResultName": "image_generation"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -20,
+        180
+      ],
+      "id": "5afdd478-7182-4fe1-a20d-1ac9f3c0fedf",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        700,
+        340
+      ],
+      "id": "cbf62de4-13e2-4c6f-b1ea-7bbbce676f53",
+      "name": "Wait",
+      "webhookId": "f3399e69-f7cf-4ad3-906d-882cbaee85ce"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "image_urls",
+        "limit": 5,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "gt",
+              "keyValue": "0"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        760,
+        160
+      ],
+      "id": "68db9f6f-4fab-4edb-85a9-ca17fd90ba1c",
+      "name": "Supabase",
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.headers[\"x-real-ip\"] }}",
+        "contextWindowLength": 3
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -820,
+        420
+      ],
+      "id": "7259a325-943a-46c1-9708-bf096f01aa3a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "image_urls",
+        "limit": 3,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "lte",
+              "keyValue": "3"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        180,
+        180
+      ],
+      "id": "d42f41ca-c435-4f89-8b00-ecc408336705",
+      "name": "Supabase1",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d62a3b3c-d0b7-44b8-b1f6-f6971200786f",
+              "leftValue": "={{ $json.totalItems }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        180
+      ],
+      "id": "cbc3b8b6-11cc-42c6-acce-b1bfefaaed17",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "image_urls",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "gt",
+              "keyValue": "0"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        300
+      ],
+      "id": "5b64fc1b-9f35-4f4e-9bf9-83e2afa55c1b",
+      "name": "Supabase2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst totalItems = items.length;\n\nreturn { totalItems };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        360,
+        180
+      ],
+      "id": "4e849ada-97ae-4989-ba80-14aa078b4090",
+      "name": "Supabase Count"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "Pantry",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        -740,
+        580
+      ],
+      "id": "8a988a51-e984-461a-a4e5-3033b08f2ba8",
+      "name": "Ingredients_List",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1000,
+        400
+      ],
+      "id": "aba4a914-5495-4ce4-92f8-f36101f6c2b6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "mymhgWKdiPoSMpuM",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "common_food_moods",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "mood_name",
+              "condition": "eq",
+              "keyValue": "={{$('Webhook').item.json.body.mood[0]}}"
+            },
+            {
+              "keyName": "mood_name",
+              "condition": "eq",
+              "keyValue": "={{$('Webhook').item.json.body.mood[1]}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        -620,
+        400
+      ],
+      "id": "196bff4a-c4fa-48d7-afff-e92da801580f",
+      "name": "food_moods",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vLH77U5clSwfegRX",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Assign Basic Parameters",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Recipe Output Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract YouTube URLs with Index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Supabase2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract YouTube URLs with Index": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Optimized YouTube Queries": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Structure Recipes Response for UI": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assign Basic Parameters": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FormatItems For ImageAssistant": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recipe Output Formatter": {
+      "main": [
+        [
+          {
+            "node": "FormatItems For ImageAssistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Generate Optimized YouTube Queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase1": {
+      "main": [
+        [
+          {
+            "node": "Supabase Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase2": {
+      "main": [
+        [
+          {
+            "node": "Structure Recipes Response for UI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Count": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ingredients_List": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "food_moods": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bd74dea0-c41a-4ca5-8b40-e8170882a82f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4b7d569930e0c75e41fd887fd31daa40194237df6113941e0066b4c9401aaefd"
+  },
+  "id": "wpnVmZSbVpYA4cQc",
+  "tags": [
+    {
+      "createdAt": "2025-05-22T14:21:03.855Z",
+      "updatedAt": "2025-05-22T14:21:03.855Z",
+      "id": "EkVfUgErUerhzPpS",
+      "name": "parallel_processing"
+    },
+    {
+      "createdAt": "2025-05-20T17:40:10.897Z",
+      "updatedAt": "2025-05-20T17:40:10.897Z",
+      "id": "veugRIul5OfY0gUc",
+      "name": "working_with_images"
+    }
+  ]
+}

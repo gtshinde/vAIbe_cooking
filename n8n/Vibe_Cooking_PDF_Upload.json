@@ -50,7 +50,7 @@
       "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
-          "id": "4h7ayxSVGSHdEsAJ",
+          "id": "mymhgWKdiPoSMpuM",
           "name": "OpenAi account"
         }
       }
@@ -84,7 +84,7 @@
     },
     {
       "parameters": {
-        "jsCode": "//Instead of returning each item individually this code creates Array of Items\nconst raw = $json.text;\nconst lines = raw.split('\\n');\n\nconst itemLines = lines.filter(line =>\n  line.match(/Qty \\d+ \\$\\d+\\.\\d{2}$/)\n);\n\nconst cleanedItems = itemLines.map(line =>\n  line.replace(/Qty \\d+ \\$\\d+\\.\\d{2}$/, '').trim()\n);\n\nreturn [{\n  json: {\n    all_items: cleanedItems\n  }\n}];\n"
+        "jsCode": "//node is tailored only for walmart receipts\n//Instead of returning each item individually this code creates Array of Items\nconst raw = $json.text;\nconst lines = raw.split('\\n');\n\nconst itemLines = lines.filter(line =>\n  line.match(/Qty \\d+ \\$\\d+\\.\\d{2}$/)\n);\n\nconst cleanedItems = itemLines.map(line =>\n  line.replace(/Qty \\d+ \\$\\d+\\.\\d{2}$/, '').trim()\n);\n\nreturn [{\n  json: {\n    all_items: cleanedItems\n  }\n}];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -112,6 +112,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "a8863f68-d28d-4f98-8213-b9c7bc3f4a09",
+        "responseMode": "responseNode",
         "options": {
           "allowedOrigins": "*"
         }
@@ -168,6 +169,20 @@
       ],
       "id": "61154c2c-fe68-40fa-baef-32319465d1ba",
       "name": "Returns Unmatched Only"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        2360,
+        0
+      ],
+      "id": "4a20d700-3808-4ebf-bfaf-d73acaf26187",
+      "name": "Respond to Webhook"
     }
   ],
   "pinData": {},
@@ -259,13 +274,24 @@
           }
         ]
       ]
+    },
+    "Supabase": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "38accfe7-586c-4bb7-8f3e-d57d0a0b551a",
+  "versionId": "c51b1a6a-498b-4b15-ab25-b9ea535467c6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4b7d569930e0c75e41fd887fd31daa40194237df6113941e0066b4c9401aaefd"

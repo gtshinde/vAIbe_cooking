@@ -1,0 +1,6 @@
+create table public.image_urls (
+  id bigint not null,
+  created_at timestamp with time zone not null default now(),
+  image_url text null,
+  constraint image_urls_pkey primary key (id)
+) TABLESPACE pg_default;

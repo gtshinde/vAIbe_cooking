@@ -1,0 +1,8 @@
+create table public.common_food_moods (
+  id serial not null,
+  mood_name text not null,
+  description text null,
+  recipe_behavior text null,
+  constraint common_food_moods_pkey primary key (id),
+  constraint unique_mood_name unique (mood_name)
+) TABLESPACE pg_default;
